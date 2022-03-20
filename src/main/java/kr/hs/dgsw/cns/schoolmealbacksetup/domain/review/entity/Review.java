@@ -12,6 +12,7 @@ import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -28,7 +29,7 @@ public class Review {
     private User user;
 
     @CreationTimestamp
-    private LocalDateTime date;
+    private LocalDate date;
 
     @NotNull
     private ReviewTime reviewTime;
