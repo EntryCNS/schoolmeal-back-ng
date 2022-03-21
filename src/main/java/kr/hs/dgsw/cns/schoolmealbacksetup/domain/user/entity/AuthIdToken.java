@@ -22,4 +22,7 @@ public class AuthIdToken{
     @Column(nullable = false)
     private Long id;
 
+    public void updateAuthId(Long id){
+        this.id = id;
+    }
 }
