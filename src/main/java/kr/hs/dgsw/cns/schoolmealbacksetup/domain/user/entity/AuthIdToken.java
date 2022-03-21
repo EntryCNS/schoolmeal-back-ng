@@ -14,7 +14,7 @@ import javax.persistence.Entity;
 @AllArgsConstructor @NoArgsConstructor
 @Builder
 @Entity
-public class AuthIdToken extends AuthId {
+public class AuthIdToken{
 
     @EmbeddedId
     private AuthId authId;
@@ -22,8 +22,4 @@ public class AuthIdToken extends AuthId {
     @Column(nullable = false)
     private Long id;
 
-    public AuthId updateAuthId(Long id){
-        this.id = id;
-        return this;
-    }
 }
