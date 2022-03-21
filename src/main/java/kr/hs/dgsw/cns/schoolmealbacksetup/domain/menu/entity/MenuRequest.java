@@ -40,7 +40,4 @@ public class MenuRequest {
     @Enumerated(EnumType.STRING)
     @ColumnDefault(value = "STANDBY")
     private MenuState state;
-
-    @NotNull
-    private Boolean anonymous;
 }
