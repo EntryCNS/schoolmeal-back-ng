@@ -22,7 +22,7 @@ public class CommonUser {
     @NotNull
     @Column(unique = true)
     @Length(max = 100)
-    private String login_id;
+    private String loginId;
 
     @NotNull
     @Column(unique = true)
