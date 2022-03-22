@@ -1,5 +1,6 @@
-package kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity;
+package kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.commonuser.entity;
 
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 

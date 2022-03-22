@@ -1,5 +1,6 @@
-package kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity;
+package kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.commonuser.entity;
 
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.commonuser.entity.AuthId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,8 +17,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class CommonUser {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private AuthId id;
+    @EmbeddedId
+    private AuthId userId;
 
     @NotNull
     @Column(unique = true)
@@ -32,4 +33,6 @@ public class CommonUser {
     @NotNull
     @Length(max = 256)
     private String password;
+
+
 }
