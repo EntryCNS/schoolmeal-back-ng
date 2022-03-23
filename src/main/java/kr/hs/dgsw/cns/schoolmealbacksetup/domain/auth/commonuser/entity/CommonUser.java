@@ -1,6 +1,6 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.commonuser.entity;
 
-import kr.hs.dgsw.cns.schoolmealbacksetup.global.entity.AuthId;
+import kr.hs.dgsw.cns.schoolmealbacksetup.global.entity.UserId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 public class CommonUser {
 
     @EmbeddedId
-    private AuthId userId;
+    private UserId userId;
 
     @NotNull
     @Column(unique = true)

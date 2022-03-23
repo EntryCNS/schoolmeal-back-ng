@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Getter
 @Embeddable
 @AllArgsConstructor @NoArgsConstructor
-public class AuthId implements Serializable {
+public class UserId implements Serializable {
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
