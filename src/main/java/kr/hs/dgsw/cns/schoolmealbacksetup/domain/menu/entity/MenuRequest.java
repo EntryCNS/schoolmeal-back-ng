@@ -1,5 +1,6 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity;
 
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuCategory;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import lombok.*;
@@ -36,8 +37,11 @@ public class MenuRequest {
     @Length(max = 512)
     private String content;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     @ColumnDefault(value = "STANDBY")
     private MenuState state;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private MenuCategory menuCategory;
 }
