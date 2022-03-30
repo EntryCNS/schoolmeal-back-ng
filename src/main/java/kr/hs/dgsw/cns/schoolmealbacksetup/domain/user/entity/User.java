@@ -1,9 +1,11 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity;
 
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.type.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Entity;
@@ -25,5 +27,9 @@ public class User {
     @NotNull
     @Length(max = 14)
     private String name;
+
+    @NotNull
+    @ColumnDefault(value = "USER")
+    private UserRole role;
 
 }
