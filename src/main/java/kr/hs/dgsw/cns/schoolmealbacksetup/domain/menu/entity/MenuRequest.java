@@ -37,11 +37,11 @@ public class MenuRequest {
     @Length(max = 512)
     private String content;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     @ColumnDefault(value = "STANDBY")
     private MenuState state;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     private MenuCategory menuCategory;
 }

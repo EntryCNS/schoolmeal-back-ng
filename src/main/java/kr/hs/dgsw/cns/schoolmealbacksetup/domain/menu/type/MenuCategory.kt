@@ -1,5 +1,5 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type;
 
-public enum MenuCategory {
+public enum class MenuCategory {
     KOREAN, WESTERN, JAPANESE, CHINESE
 }
