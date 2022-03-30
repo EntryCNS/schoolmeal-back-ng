@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import java.io.Serializable;
@@ -14,7 +15,11 @@ import java.io.Serializable;
 @Embeddable
 @AllArgsConstructor @NoArgsConstructor
 @Getter
-public class VoteId extends AuthId implements Serializable {
+public class VoteId implements Serializable {
+
+    @EmbeddedId
+    private AuthId id;
+
     @OneToOne
     @JoinColumn(name = "menu_id")
     private MenuRequest menu;
