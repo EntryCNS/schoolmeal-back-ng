@@ -1,5 +1,6 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,9 +12,11 @@ import lombok.Getter;
 public class MenuDto {
     private final Long id;
 
-    private final Long written_at;
+    @JsonProperty("written_at")
+    private final Long writtenAt;
 
-    private final String menu_name;
+    @JsonProperty("menu_name")
+    private final String menuName;
 
     private final String description;
 
