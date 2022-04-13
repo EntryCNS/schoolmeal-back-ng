@@ -9,7 +9,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class SignInResponse {
 
-    private String id;
-    private String password;
+    private String refresh_token;
 
 }
