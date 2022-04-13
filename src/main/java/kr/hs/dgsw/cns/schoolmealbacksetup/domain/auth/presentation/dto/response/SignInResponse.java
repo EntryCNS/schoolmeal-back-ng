@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class SignIn {
+public class SignInResponse {
 
     private String id;
     private String password;

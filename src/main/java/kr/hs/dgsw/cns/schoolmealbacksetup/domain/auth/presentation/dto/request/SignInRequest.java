@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @AllArgsConstructor
-public class SignIn {
+public class SignInRequest {
 
     @NotNull
     @Size(min=3, max=20)
