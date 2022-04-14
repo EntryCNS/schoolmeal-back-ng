@@ -16,7 +16,7 @@ public class WriteReviewResponseDto {
     private String date;
 
     @NotNull
-    private enum review_time {BREAKFAST, LUNCH, DINNER};
+    private enum reviewTime {BREAKFAST, LUNCH, DINNER};
 
     @NotNull
     private String massage;
