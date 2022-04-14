@@ -1,5 +1,6 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.domain.review.dto.response;
 
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.review.type.ReviewTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +15,9 @@ public class WriteReviewResponseDto {
 
     @NotNull
     private String date;
+
+    @NotNull
+    private ReviewTime reviewTime;
 
     @NotNull
     private String massage;
