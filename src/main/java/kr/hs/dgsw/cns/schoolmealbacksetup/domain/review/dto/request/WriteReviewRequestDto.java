@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Builder
 @AllArgsConstructor
-public class WriteReviewResponseDto {
+public class WriteReviewRequestDto {
 
     @NotNull
     private String date;
