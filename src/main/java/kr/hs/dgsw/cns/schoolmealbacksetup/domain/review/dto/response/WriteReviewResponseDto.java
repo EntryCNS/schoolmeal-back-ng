@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -24,5 +25,6 @@ public class WriteReviewResponseDto {
 
     @NotNull
     @Max(5)
+    @Min(1)
     private int rate;
 }
