@@ -13,8 +13,6 @@ public class MenucertainDto {
 
     private final Long id;
 
-    private final Long menuId;
-
     @JsonProperty("written_at")
     private final Long writtenAt;
 
