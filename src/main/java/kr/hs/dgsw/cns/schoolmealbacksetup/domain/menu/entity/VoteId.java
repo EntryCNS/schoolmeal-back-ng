@@ -6,18 +6,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 
+@Getter
 @Embeddable
 @AllArgsConstructor @NoArgsConstructor
-@Getter
 public class VoteId implements Serializable {
 
-    @EmbeddedId
+    @Embedded
     private AuthId id;
 
     @OneToOne

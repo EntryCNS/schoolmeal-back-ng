@@ -12,17 +12,17 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-@Entity
 @Getter
 @AllArgsConstructor @NoArgsConstructor
 @Builder
+@Entity
 public class MenuRequest {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name= "user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @NotNull
@@ -37,8 +37,8 @@ public class MenuRequest {
     @Length(max = 512)
     private String content;
 
+    @ColumnDefault(value = "'STANDBY'")
     @Enumerated(EnumType.STRING)
-    @ColumnDefault(value = "STANDBY")
     private MenuState state;
 
     @NotNull
