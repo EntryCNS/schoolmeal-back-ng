@@ -7,6 +7,8 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -44,4 +46,18 @@ public class MenuRequest {
     @NotNull
     @Enumerated(EnumType.STRING)
     private MenuCategory menuCategory;
+
+    @Getter
+    @ResponseStatus(value = HttpStatus.CONFLICT)
+    public static class PageCannotNegative extends RuntimeException {
+        private final LocalDateTime localDateTime;
+        private final String message;
+
+        public PageCannotNegative() {
+            this.localDateTime = LocalDateTime.now();
+            this.message = "Parameter `page` cannot be negative.";
+        }
+    }
+
+
 }
