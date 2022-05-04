@@ -9,7 +9,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-public class MenucertainDto {
+public class MenuCertainDto {
 
     private final Long id;
 
