@@ -59,5 +59,15 @@ public class MenuRequest {
         }
     }
 
+    @Getter
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public static class CannotFound extends RuntimeException {
+        private final LocalDateTime localDateTime;
+        private final String message;
 
+        public CannotFound(long id) {
+            this.localDateTime = LocalDateTime.now();
+            this.message = String.format("cannot found menu such as id is '%d'", id);
+        }
+    }
 }
