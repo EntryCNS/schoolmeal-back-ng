@@ -50,23 +50,17 @@ public class MenuRequest {
     @Getter
     @ResponseStatus(value = HttpStatus.CONFLICT)
     public static class PageCannotNegative extends RuntimeException {
-        private final LocalDateTime localDateTime;
-        private final String message;
-
-        public PageCannotNegative() {
-            this.localDateTime = LocalDateTime.now();
-            this.message = "Parameter `page` cannot be negative.";
-        }
+        private final LocalDateTime localDateTime = LocalDateTime.now();
+        private final String message = "Parameter 'page' cannot be negative.";
     }
 
     @Getter
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public static class CannotFound extends RuntimeException {
-        private final LocalDateTime localDateTime;
+        private final LocalDateTime localDateTime = LocalDateTime.now();
         private final String message;
 
         public CannotFound(long id) {
-            this.localDateTime = LocalDateTime.now();
             this.message = String.format("cannot found menu such as id is '%d'", id);
         }
     }
