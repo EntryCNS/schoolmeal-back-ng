@@ -39,4 +39,22 @@ public interface MenuService {
      * @return {@link MenuDto}
      */
     MenuDto findById(long menuId);
+
+    /**
+     * <h2>투표 추가</h2>
+     * 메뉴 id로 해당 메뉴에 투표를 합니다
+     * @param menuId 메뉴 id
+     * @throws kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest.CannotFound
+     * {@code menuId}를 가진 메뉴를 찾지 못한 경우 발생합니다
+     */
+    void addVote(long menuId);
+
+    /**
+     * <h2>투표 취소</h2>
+     * 메뉴 id로 해당 메뉴에 했던 투표를 취소합니다
+     * @param menuId 메뉴 id
+     * @throws kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest.CannotFound
+     * {@code menuId}를 가진 메뉴를 찾지 못한 경우 발생합니다
+     */
+    void cancelVote(long menuId);
 }
