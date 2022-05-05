@@ -16,7 +16,8 @@ public interface MenuService {
      * 0보다 작은 경우, 예외가 발생합니다
      * @param page 메뉴 page
      * @return {@link MenuListDto}
-     * @throws kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest.PageCannotNegative page 파라미터가 음수일 경우 예외를 던집니다
+     * @throws kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest.PageCannotNegative
+     * page 파라미터가 음수인 경우 발생합니다
      */
     MenuListDto findAllMenus(long page);
 
@@ -31,8 +32,10 @@ public interface MenuService {
 
     /**
      * <h2>특정 메뉴 가져오기</h2>
-     * 메뉴의 id로 해당 메뉴를 찾습니다
-     * @param menuId 메뉴의 Id
+     * 메뉴 id로 해당 메뉴를 찾습니다
+     * @param menuId 메뉴 Id
+     * @throws kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest.CannotFound
+     * {@code menuId}를 가진 메뉴를 찾지 못한 경우 발생합니다
      * @return {@link MenuDto}
      */
     MenuDto findById(long menuId);
