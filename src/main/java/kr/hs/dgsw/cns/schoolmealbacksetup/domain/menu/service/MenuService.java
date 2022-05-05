@@ -3,6 +3,7 @@ package kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.service;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuCreationDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuListDto;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuStateDto;
 
 /**
  * <h1>메뉴 Service Interface</h1>
@@ -57,4 +58,18 @@ public interface MenuService {
      * {@code menuId}를 가진 메뉴를 찾지 못한 경우 발생합니다
      */
     void cancelVote(long menuId);
+
+    /**
+     * <h2>메뉴 상태 설정</h2>
+     * boolean 을 enum 으로 치환되어 저장됩니다
+     * true 인 경우 ALLOWED, false 인 경우 DENIED
+     * @implNote 해당 메소드를 호출 전까지는 STANDBY 상태입니다
+     * @param menuId 메뉴 id
+     * @param menuStateDto boolean 형태의 상태
+     * @throws kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest.CannotFound
+     * {@code menuId}를 가진 메뉴를 찾지 못한 경우 발생합니다
+     * @return MenuDto
+     * @see kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState
+     */
+    MenuDto updateState(long menuId, MenuStateDto menuStateDto);
 }
