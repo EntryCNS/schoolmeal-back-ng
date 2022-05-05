@@ -51,7 +51,7 @@ public class MenuRequest {
     @ResponseStatus(value = HttpStatus.CONFLICT)
     public static class PageCannotNegative extends RuntimeException {
         private final LocalDateTime localDateTime = LocalDateTime.now();
-        private final String message = "Parameter 'page' cannot be negative.";
+        private static final String message = "Parameter 'page' cannot be negative.";
     }
 
     @Getter
