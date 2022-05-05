@@ -1,5 +1,6 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuCategory;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
@@ -51,7 +52,8 @@ public class MenuRequest {
     @ResponseStatus(value = HttpStatus.CONFLICT)
     public static class PageCannotNegative extends RuntimeException {
         private final LocalDateTime localDateTime = LocalDateTime.now();
-        private static final String message = "Parameter 'page' cannot be negative.";
+        @JsonProperty(value = "message")
+        private static final String MESSAGE = "Parameter 'page' cannot be negative.";
     }
 
     @Getter
