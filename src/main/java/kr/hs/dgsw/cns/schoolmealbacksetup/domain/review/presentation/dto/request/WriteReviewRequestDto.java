@@ -1,4 +1,4 @@
-package kr.hs.dgsw.cns.schoolmealbacksetup.domain.review.dto.request;
+package kr.hs.dgsw.cns.schoolmealbacksetup.domain.review.presentation.dto.request;
 
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.review.type.ReviewTime;
 import lombok.AllArgsConstructor;
