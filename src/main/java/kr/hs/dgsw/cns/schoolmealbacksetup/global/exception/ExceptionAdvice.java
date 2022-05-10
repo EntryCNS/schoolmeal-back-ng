@@ -47,7 +47,7 @@ public class ExceptionAdvice {
     protected ResponseEntity<ExceptionDto> menuPageCannotNegativeException(
             MenuRequest.PageCannotNegative pageCannotNegative
     ) {
-        return sendException(pageCannotNegative);
+        return sendException(pageCannotNegative, "Parameter 'page' cannot be negative.");
     }
 
     /**
@@ -57,8 +57,14 @@ public class ExceptionAdvice {
      * @return 예외 response. {@code ResponseEntity<ExceptionDto>}를 반환합니다.
      */
     private ResponseEntity<ExceptionDto> sendException(RuntimeException runtimeException) {
+        return sendException(runtimeException, runtimeException.getMessage());
+    }
+
+    private ResponseEntity<ExceptionDto> sendException(
+            RuntimeException runtimeException, String message
+    ) {
         return ResponseEntity.status(getHttpStatus(runtimeException.getClass()))
-                .body(new ExceptionDto(runtimeException.getMessage()));
+                .body(new ExceptionDto(message));
     }
 
     /**
