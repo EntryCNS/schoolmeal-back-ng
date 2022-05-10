@@ -1,6 +1,5 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuCategory;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
