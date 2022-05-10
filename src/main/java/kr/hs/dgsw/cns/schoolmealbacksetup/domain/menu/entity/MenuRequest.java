@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuCategory;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
-import kr.hs.dgsw.cns.schoolmealbacksetup.global.exception.GlobalException;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
@@ -51,14 +50,13 @@ public class MenuRequest {
 
     @Getter
     @ResponseStatus(value = HttpStatus.CONFLICT)
-    public static class PageCannotNegative extends GlobalException {
-        @JsonProperty(value = "message")
-        private static final String MESSAGE = "Parameter 'page' cannot be negative.";
+    public static class PageCannotNegative extends RuntimeException {
+        private final String message = "Parameter 'page' cannot be negative.";
     }
 
     @Getter
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    public static class CannotFound extends GlobalException {
+    public static class CannotFound extends RuntimeException {
         private final String message;
 
         public CannotFound(long id) {
