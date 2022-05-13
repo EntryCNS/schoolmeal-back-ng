@@ -1,4 +1,4 @@
-package kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.entity;
+package kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.oauthuser.entity;
 
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.entity.UserId;
 import lombok.AllArgsConstructor;
