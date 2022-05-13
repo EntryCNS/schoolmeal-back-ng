@@ -1,4 +1,4 @@
-package kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.repository;
+package kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.oauthuser.repository;
 
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.oauthuser.entity.OAuthUser;
 import org.springframework.data.repository.CrudRepository;
