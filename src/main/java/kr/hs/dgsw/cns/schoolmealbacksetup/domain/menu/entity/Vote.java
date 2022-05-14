@@ -15,4 +15,12 @@ import javax.persistence.*;
 public class Vote {
     @EmbeddedId
     private VoteId id;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "menu_request_id", nullable = false, unique = true)
+    private MenuRequest menuRequest;
+
+    public void setMenuRequest(MenuRequest menuRequest) {
+        this.menuRequest = menuRequest;
+    }
 }

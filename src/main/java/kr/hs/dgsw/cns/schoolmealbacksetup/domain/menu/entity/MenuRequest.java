@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @AllArgsConstructor @NoArgsConstructor
@@ -47,6 +48,21 @@ public class MenuRequest {
     @Enumerated(EnumType.STRING)
     private MenuCategory menuCategory;
 
+    @OneToMany(mappedBy = "menuRequest", fetch = FetchType.EAGER)
+    private Set<Vote> votes;
+
+    public void addVote(Vote vote) {
+        this.votes.add(vote);
+    }
+
+    public void removeVote(Vote vote) {
+        this.votes.remove(vote);
+    }
+
+    public void setMenuState(MenuState menuState) {
+        this.state = menuState;
+    }
+ 
     @Getter
     @ResponseStatus(value = HttpStatus.CONFLICT)
     public static class PageCannotNegative extends RuntimeException {
