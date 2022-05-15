@@ -32,6 +32,6 @@ public class MenuDto {
         this.menuName = menuRequest.getMenuName();
         this.description = menuRequest.getContent();
         this.kind = menuRequest.getMenuCategory();
-        this.votes = menuRequest.getVotes().size();
+        this.votes = (menuRequest.getVotes() == null) ? 0 : menuRequest.getVotes().size();
     }
 }

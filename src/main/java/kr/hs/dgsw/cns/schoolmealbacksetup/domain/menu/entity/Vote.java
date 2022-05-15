@@ -16,7 +16,7 @@ public class Vote {
     @EmbeddedId
     private VoteId id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "menu_request_id", nullable = false, unique = true)
     private MenuRequest menuRequest;
 
