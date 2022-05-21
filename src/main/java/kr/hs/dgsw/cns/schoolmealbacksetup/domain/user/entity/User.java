@@ -39,10 +39,10 @@ public class User implements UserDetails {
     private UserRole role;
 
     @OneToOne
-    private transient CommonUser commonUser;
+    private CommonUser commonUser;
 
     @OneToOne
-    private transient OAuthUser oAuthUser;
+    private OAuthUser oAuthUser;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

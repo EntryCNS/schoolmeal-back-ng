@@ -9,13 +9,14 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class CommonUser {
+public class CommonUser implements Serializable {
 
     @EmbeddedId
     private UserId userId;
