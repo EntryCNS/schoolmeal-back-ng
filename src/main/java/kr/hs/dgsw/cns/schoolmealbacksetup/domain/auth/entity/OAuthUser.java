@@ -9,12 +9,13 @@ import lombok.NoArgsConstructor;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Getter
 @AllArgsConstructor @NoArgsConstructor
 @Builder
 @Entity
-public class OAuthUser {
+public class OAuthUser implements Serializable {
 
     @EmbeddedId
     private UserId userId;
