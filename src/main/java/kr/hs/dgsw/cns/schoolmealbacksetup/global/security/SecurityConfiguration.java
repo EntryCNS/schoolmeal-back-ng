@@ -28,7 +28,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 // CSRF 방지토큰 활성화 / 로그인 폼 및 CORS 비활성화
-                .csrf().and()
+                .csrf().disable()
                 .formLogin().disable()
                 .cors().disable()
 
