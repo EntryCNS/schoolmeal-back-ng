@@ -1,14 +1,11 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.global.security;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
+import org.springframework.stereotype.Component;
 
-@Getter @Setter
-@AllArgsConstructor
-@ConstructorBinding
+@Data
+@Component
 @ConfigurationProperties(prefix = "jwt")
 public class JwtConfiguration {
     private Long tokenPeriod;
