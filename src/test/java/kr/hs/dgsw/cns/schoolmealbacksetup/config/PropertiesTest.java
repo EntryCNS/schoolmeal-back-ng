@@ -8,15 +8,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import static org.assertj.core.api.Assertions.*;
+
 @SpringBootTest
-public class PropertiesTest {
+class PropertiesTest {
     @Autowired
     private JwtConfiguration jwtConfiguration;
-    private static Logger logger = LoggerFactory.getLogger(PropertiesTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(PropertiesTest.class);
 
     @DisplayName("Jwt configuration")
     @Test
     void printConfiguration() {
         logger.info(jwtConfiguration.toString());
+        assertThat(jwtConfiguration).isNotNull();
     }
 }
