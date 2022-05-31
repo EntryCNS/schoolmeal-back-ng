@@ -38,3 +38,4 @@ out/
 
 ### PRIVATE DATA ###
 application.yml
+application.properties

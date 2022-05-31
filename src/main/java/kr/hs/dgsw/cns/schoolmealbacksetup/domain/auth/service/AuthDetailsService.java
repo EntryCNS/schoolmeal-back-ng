@@ -1,8 +1,6 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.service;
 
-import kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.commonuser.repository.CommonUserRepository;
-import kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.repository.OAuthRepository;
-import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.repository.UserRepository;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.oauthuser.repository.OAuthRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
