@@ -30,11 +30,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionAdvice {
 
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ExceptionDto> defaultException(Exception e) {
+    protected ResponseEntity<ExceptionDto> undefinedException(Exception e) {
         final ExceptionDto exceptionDto = ExceptionDto.builder()
                 .message("서버에서 오류가 발생하였습니다.")
                 .build();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(exceptionDto);
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    protected ResponseEntity<ExceptionDto> definedException(BusinessException e) {
+        final ExceptionDto exceptionDto = ExceptionDto.builder()
+                .message(e.getMessage())
+                .build();
+        return ResponseEntity.status(e.getStatus())
                 .body(exceptionDto);
     }
 
