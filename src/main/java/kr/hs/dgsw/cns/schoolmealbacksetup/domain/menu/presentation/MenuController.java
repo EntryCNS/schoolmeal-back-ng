@@ -1,4 +1,4 @@
-package kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.controller;
+package kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation;
 
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuCreationDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
