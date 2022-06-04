@@ -54,8 +54,11 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public MenuDto findById(long menuId) {
-        return null;
+        MenuRequest menuRequest = menuRequestRepository.findById(menuId)
+                .orElseThrow(() -> new MenuRequest.CannotFound(menuId));
+        return new MenuDto(menuRequest);
     }
 
     @Override
