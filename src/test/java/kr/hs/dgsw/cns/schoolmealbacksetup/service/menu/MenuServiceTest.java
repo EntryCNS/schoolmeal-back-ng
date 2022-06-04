@@ -9,14 +9,14 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuCategory;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.type.UserRole;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,29 +40,37 @@ public class MenuServiceTest {
                 .build();
     }
     
-    private MenuCreationDto menuCreationDto() {
+    private MenuCreationDto menuCreationDto(String name, String description) {
         return MenuCreationDto.builder()
-                .menuName("김밥")
-                .description("참치 김밥")
+                .menuName(name)
+                .description(description)
                 .kind(MenuCategory.KOREAN)
                 .build();
     }
 
+    private MenuRequest toEntity(MenuCreationDto menuCreationDto) {
+        return MenuRequest.builder()
+                .id(1L)
+                .createAt(LocalDateTime.now())
+                .user(user())
+                .menuName(menuCreationDto.getMenuName())
+                .content(menuCreationDto.getDescription())
+                .menuCategory(menuCreationDto.getKind())
+                .state(MenuState.STANDBY)
+                .build();
+    }
+
+//    private MenuRequest save(MenuCreationDto menuCreationDto) {
+//        return doReturn(toEntity(menuCreationDto)).when(menuRequestRepository)
+//                .save(any(MenuRequest.class));
+//    }
+
+    @Order(1)
     @DisplayName("메뉴 추가 테스트")
     @Test
     void addMenu() {
         // given
-        MenuCreationDto menuCreationDto = menuCreationDto();
-
-        doReturn(MenuRequest.builder()
-                .user(user())
-                .menuCategory(menuCreationDto.getKind())
-                .state(MenuState.STANDBY)
-                .content(menuCreationDto.getDescription())
-                .menuName(menuCreationDto.getMenuName())
-                .createAt(LocalDateTime.now())
-                .build()).when(menuRequestRepository)
-                .save(any(MenuRequest.class));
+        MenuCreationDto menuCreationDto = menuCreationDto("김밥", "참치 김밥");
 
         // when
         MenuDto menuDto = menuService.addMenu(user(), menuCreationDto);
@@ -77,4 +85,24 @@ public class MenuServiceTest {
                 .save(any(MenuRequest.class));
     }
 
+    @Order(2)
+    @DisplayName("id 로 메뉴 조회")
+    @Test
+    void findMenuById() {
+        // given
+        MenuCreationDto menuCreationDto = menuCreationDto("규카츠", "규카츠는 맛있습니다.");
+        lenient().doReturn(toEntity(menuCreationDto)).when(menuRequestRepository)
+                .save(any(MenuRequest.class));
+        long id = 1L;
+        when(menuRequestRepository.findById(id))
+                .thenReturn(Optional.of(toEntity(menuCreationDto)));
+
+        // when
+        MenuDto menuDto = menuService.findById(id);
+
+        // then
+        assertThat(menuDto).isNotNull();
+        assertThat(menuDto.getId()).isEqualTo(id);
+        assertThat(menuDto.getMenuName()).isEqualTo(menuCreationDto.getMenuName());
+    }
 }
