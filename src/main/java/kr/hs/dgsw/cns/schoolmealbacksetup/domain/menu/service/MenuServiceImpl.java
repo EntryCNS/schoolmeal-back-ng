@@ -6,6 +6,7 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuListDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuStateDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.MenuRequestRepository;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class MenuServiceImpl implements MenuService {
     private final MenuRequestRepository menuRequestRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public MenuListDto findAllMenus(long page) {
         List<MenuRequest> menuRequests =
                 menuRequestRepository.findTop10ByOrderByCreateAtDesc();
@@ -39,7 +41,16 @@ public class MenuServiceImpl implements MenuService {
     @Override
     @Transactional
     public MenuDto addMenu(User user, MenuCreationDto menuCreationDto) {
-        return null;
+        MenuRequest menuRequest = MenuRequest.builder()
+                .user(user)
+                .menuName(menuCreationDto.getMenuName())
+                .content(menuCreationDto.getDescription())
+                .state(MenuState.STANDBY)
+                .menuCategory(menuCreationDto.getKind())
+                .build();
+
+        MenuRequest savedRequest = menuRequestRepository.save(menuRequest);
+        return new MenuDto(savedRequest);
     }
 
     @Override

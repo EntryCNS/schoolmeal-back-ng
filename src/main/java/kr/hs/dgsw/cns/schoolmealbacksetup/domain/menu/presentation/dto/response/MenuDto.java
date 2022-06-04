@@ -3,11 +3,15 @@ package kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response
 import com.fasterxml.jackson.annotation.JsonProperty;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuCategory;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.ZoneId;
 
 @Getter
+@AllArgsConstructor
+@Builder
 public class MenuDto {
     private final Long id;
 

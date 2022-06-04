@@ -59,9 +59,9 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-jackson:2.9.0")
     compileOnly 'org.projectlombok:lombok'
-    testImplementation 'org.assertj:assertj-core:3.22.0'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'mysql:mysql-connector-java' //runtimeOnly 'com.h2database:h2'
+    testImplementation 'org.assertj:assertj-core:3.22.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 
