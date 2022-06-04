@@ -12,21 +12,21 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.security.Principal;
 
-@RestController
-@RequestMapping("/auth")
 @RequiredArgsConstructor
-class AuthController {
+@RequestMapping("/auth")
+@RestController
+public class AuthController {
 
-    @Resource(name = "authServiceImpl")
+    @Resource(name = "AuthServiceImpl")
     private final AuthService authService;
 
     @GetMapping("/oauth")
-    OAuthResponseDto oAuth(@RequestParam String code) {
+    public OAuthResponseDto oAuth(@RequestParam String code) {
         return authService.oAuthGoogle(code);
     }
 
     @GetMapping("/refresh")
-    TokenRefreshResponse refresh(@RequestBody @Valid TokenRefreshRequest request, Principal principal) {
+    public TokenRefreshResponse refresh(@RequestBody @Valid TokenRefreshRequest request, Principal principal) {
         if(!(principal instanceof User)) throw new User.UnauthorizedException();
         return authService.refreshToken((User)principal, request);
     }

@@ -20,7 +20,7 @@ import retrofit2.Response;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-@Service
+@Service(value = "AuthServiceImpl")
 public class AuthServiceImpl implements AuthService {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
@@ -79,6 +79,7 @@ public class AuthServiceImpl implements AuthService {
                     .getInfo(String.format("Bearer %s", accessToken))
                     .execute();
             if(!infoRes.isSuccessful()) {
+                assert infoRes.errorBody() != null;
                 logger.error(new String(infoRes.errorBody().bytes()));
                 throw new User.FailedToAuthException();
             }
