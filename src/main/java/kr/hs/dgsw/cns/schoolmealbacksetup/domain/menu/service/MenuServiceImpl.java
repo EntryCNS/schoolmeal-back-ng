@@ -1,12 +1,16 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.service;
 
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.Vote;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.VoteId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuCreationDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuListDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuStateDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.MenuRequestRepository;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.VoteRepository;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.AuthId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +24,7 @@ import java.util.stream.Collectors;
 public class MenuServiceImpl implements MenuService {
 
     private final MenuRequestRepository menuRequestRepository;
+    private final VoteRepository voteRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -62,13 +67,37 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    @Transactional
     public void addVote(User user, long menuId) {
+        MenuRequest menuRequest = menuRequestRepository.findById(menuId)
+                .orElseThrow(() -> new MenuRequest.CannotFound(menuId));
 
+        VoteId voteId = new VoteId(new AuthId(user));
+
+        if (voteRepository.existsById(voteId)) {
+            // 존재한다면 이미 투표되었다고 409 예외 발생
+            throw new Vote.AlreadyVoted();
+        }
+
+        Vote vote = Vote.builder()
+                .id(voteId)
+                .menuRequest(menuRequest)
+                .build();
+
+        menuRequest.addVote(vote);
     }
 
     @Override
-    public void cancelVote(User user, long menuId) {
+    @Transactional
+    public void cancelVote(VoteId voteId, long menuId) {
+        MenuRequest menuRequest = menuRequestRepository.findById(menuId)
+                .orElseThrow(() -> new MenuRequest.CannotFound(menuId));
 
+        Vote vote = voteRepository.findByIdAndMenuRequestId(voteId, menuId)
+                .orElseThrow(Vote.NeverVoted::new);
+
+        menuRequest.removeVote(vote);
+        voteRepository.delete(vote);
     }
 
     @Override
