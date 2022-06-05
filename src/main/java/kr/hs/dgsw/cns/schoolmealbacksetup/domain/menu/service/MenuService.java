@@ -1,5 +1,6 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.service;
 
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.VoteId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuCreationDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuListDto;
@@ -57,11 +58,11 @@ public interface MenuService {
      * <h2>투표 취소</h2>
      * 메뉴 id로 해당 메뉴에 했던 투표를 취소합니다
      * @param menuId 메뉴 id
-     * @param user 투표 취소자
+     * @param voteId 투표 취소자
      * @throws kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest.CannotFound
      * {@code menuId}를 가진 메뉴를 찾지 못한 경우 발생합니다
      */
-    void cancelVote(User user, long menuId);
+    void cancelVote(VoteId voteId, long menuId);
 
     /**
      * <h2>메뉴 상태 설정</h2>
