@@ -1,12 +1,16 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.service.menu;
 
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.Vote;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.VoteId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuCreationDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.MenuRequestRepository;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.VoteRepository;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.service.MenuServiceImpl;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuCategory;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.AuthId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.type.UserRole;
 import org.junit.jupiter.api.*;
@@ -16,9 +20,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -27,6 +35,9 @@ public class MenuServiceTest {
 
     @Mock
     private MenuRequestRepository menuRequestRepository;
+
+    @Mock
+    private VoteRepository voteRepository;
 
     @InjectMocks
     private MenuServiceImpl menuService;
@@ -49,6 +60,10 @@ public class MenuServiceTest {
     }
 
     private MenuRequest toEntity(MenuCreationDto menuCreationDto) {
+        return toEntity(menuCreationDto, new HashSet<>());
+    }
+
+    private MenuRequest toEntity(MenuCreationDto menuCreationDto, Set<Vote> votes) {
         return MenuRequest.builder()
                 .id(1L)
                 .createAt(LocalDateTime.now())
@@ -57,20 +72,25 @@ public class MenuServiceTest {
                 .content(menuCreationDto.getDescription())
                 .menuCategory(menuCreationDto.getKind())
                 .state(MenuState.STANDBY)
+                .votes(votes)
                 .build();
     }
 
-//    private MenuRequest save(MenuCreationDto menuCreationDto) {
-//        return doReturn(toEntity(menuCreationDto)).when(menuRequestRepository)
-//                .save(any(MenuRequest.class));
-//    }
+    private Vote toEntity(MenuRequest menuRequest) {
+        return Vote.builder()
+                .id(new VoteId(new AuthId(user())))
+                .menuRequest(menuRequest)
+                .build();
+    }
 
-    @Order(1)
+
     @DisplayName("메뉴 추가 테스트")
     @Test
     void addMenu() {
         // given
         MenuCreationDto menuCreationDto = menuCreationDto("김밥", "참치 김밥");
+        lenient().doReturn(toEntity(menuCreationDto)).when(menuRequestRepository)
+                .save(any(MenuRequest.class));
 
         // when
         MenuDto menuDto = menuService.addMenu(user(), menuCreationDto);
@@ -85,7 +105,6 @@ public class MenuServiceTest {
                 .save(any(MenuRequest.class));
     }
 
-    @Order(2)
     @DisplayName("id 로 메뉴 조회")
     @Test
     void findMenuById() {
@@ -94,7 +113,7 @@ public class MenuServiceTest {
         lenient().doReturn(toEntity(menuCreationDto)).when(menuRequestRepository)
                 .save(any(MenuRequest.class));
         long id = 1L;
-        when(menuRequestRepository.findById(id))
+        lenient().when(menuRequestRepository.findById(id))
                 .thenReturn(Optional.of(toEntity(menuCreationDto)));
 
         // when
@@ -104,5 +123,56 @@ public class MenuServiceTest {
         assertThat(menuDto).isNotNull();
         assertThat(menuDto.getId()).isEqualTo(id);
         assertThat(menuDto.getMenuName()).isEqualTo(menuCreationDto.getMenuName());
+    }
+
+    @DisplayName("id 로 메뉴 투표")
+    @Test
+    void addVoteMenu() {
+        // given
+        MenuCreationDto menuCreationDto = menuCreationDto("바나나 우유", "바나나는 원래 하얗다.");
+        MenuRequest menuRequest = toEntity(menuCreationDto);
+
+        lenient().doReturn(menuRequest).when(menuRequestRepository)
+                .save(any(MenuRequest.class));
+        long id = 1L;
+        lenient().when(menuRequestRepository.findById(id))
+                .thenReturn(Optional.of(menuRequest));
+
+        // when
+        menuService.addVote(user(), id);
+
+        // then
+        assertEquals(1, menuRequest.getVotes().size());
+    }
+
+    @DisplayName("id 로 투표 취소")
+    @Test
+    void cancelVoteMenu() {
+        // given
+        MenuCreationDto menuCreationDto = menuCreationDto("치킨", "아주 훌륭한 닭다리가 먹고 싶습니다.");
+        Vote vote = toEntity(toEntity(menuCreationDto));
+        lenient().doReturn(vote).when(voteRepository)
+                .save(any(Vote.class));
+        voteRepository.save(any(Vote.class));
+        
+        MenuRequest menuRequest = toEntity(menuCreationDto, new HashSet<>(Set.of(vote)));
+        lenient().doReturn(menuRequest).when(menuRequestRepository)
+                        .save(any(MenuRequest.class));
+        menuRequestRepository.save(any(MenuRequest.class));
+
+        lenient().when(menuRequestRepository.findById(1L))
+                .thenReturn(Optional.of(menuRequest));
+        lenient().when(voteRepository.findByIdAndMenuRequestId(vote.getId(), 1L))
+                .thenReturn(Optional.of(vote));
+        // when
+        menuService.cancelVote(vote.getId(), 1L);
+
+        // then
+        assertEquals(0, menuRequest.getVotes().size());
+
+        // verity
+        verify(voteRepository, times(1))
+                .delete(vote);
+
     }
 }
