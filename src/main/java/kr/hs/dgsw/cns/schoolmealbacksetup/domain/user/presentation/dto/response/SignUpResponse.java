@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
-@AllArgsConstructor
+@AllArgsConstructor @NoArgsConstructor
 public class SignUpResponse {
 
     @JsonProperty(value = "login_id")
     private String loginId;
     private String email;
-
 }
