@@ -101,7 +101,18 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    @Transactional
     public MenuDto updateState(User user, long menuId, MenuStateDto menuStateDto) {
-        return null;
+        MenuRequest menuRequest = menuRequestRepository.findById(menuId)
+                .orElseThrow(() -> new MenuRequest.CannotFound(menuId));
+        menuRequest.setMenuState(convertFrom(menuStateDto));
+
+        return new MenuDto(menuRequest);
     }
+
+    private MenuState convertFrom(MenuStateDto menuStateDto) {
+        return (menuStateDto.isAccepted()) ? MenuState.ALLOWED : MenuState.DENIED;
+    }
+
+
 }
