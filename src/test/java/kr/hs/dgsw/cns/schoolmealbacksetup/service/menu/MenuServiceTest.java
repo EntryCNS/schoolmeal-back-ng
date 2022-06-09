@@ -5,6 +5,7 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.Vote;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.VoteId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuCreationDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuStateDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.MenuRequestRepository;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.VoteRepository;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.service.MenuServiceImpl;
@@ -175,4 +176,25 @@ public class MenuServiceTest {
                 .delete(vote);
 
     }
+
+    @DisplayName("메뉴 상태 업데이트")
+    @Test
+    void menuStateTest() {
+        // given
+        MenuRequest menuRequest = toEntity(menuCreationDto("피자", "치즈 피자"));
+        lenient().doReturn(menuRequest).when(menuRequestRepository)
+                .save(any(MenuRequest.class));
+        menuRequestRepository.save(any(MenuRequest.class));
+
+        lenient().when(menuRequestRepository.findById(1L))
+                .thenReturn(Optional.of(menuRequest));
+        MenuStateDto menuStateDto = new MenuStateDto(true);
+
+        // when
+        MenuDto menuDto = menuService.updateState(user(), 1L, menuStateDto);
+
+        // then
+        assertEquals(MenuState.ALLOWED, menuDto.getMenuState());
+    }
+
 }
