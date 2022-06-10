@@ -7,6 +7,8 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -44,4 +46,19 @@ public class MenuRequest {
     @NotNull
     @Enumerated(EnumType.STRING)
     private MenuCategory menuCategory;
+
+    @Getter
+    @ResponseStatus(value = HttpStatus.CONFLICT)
+    public static class PageCannotNegative extends RuntimeException {
+    }
+
+    @Getter
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public static class CannotFound extends RuntimeException {
+        private final String message;
+
+        public CannotFound(long id) {
+            this.message = String.format("cannot found menu such as id is '%d'", id);
+        }
+    }
 }
