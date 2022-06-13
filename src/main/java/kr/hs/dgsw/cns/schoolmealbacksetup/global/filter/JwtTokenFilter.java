@@ -33,15 +33,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
     }
 
-    private void filterException(TokenException exception, HttpServletResponse response) {
+    private void filterException(TokenException exception, HttpServletResponse response)
+            throws IOException {
         response.setStatus(exception.getStatus().value());
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        
-        try {
-            response.getWriter().write(exception.getMessage());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        response.getWriter().write(exception.getMessage());
     }
 }
