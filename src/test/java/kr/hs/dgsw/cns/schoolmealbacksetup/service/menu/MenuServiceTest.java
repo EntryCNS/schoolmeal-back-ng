@@ -27,7 +27,6 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -106,7 +105,7 @@ public class MenuServiceTest {
                 .save(any(MenuRequest.class));
     }
 
-    @DisplayName("id 로 메뉴 조회")
+    @DisplayName("id로 메뉴 조회")
     @Test
     void findMenuById() {
         // given

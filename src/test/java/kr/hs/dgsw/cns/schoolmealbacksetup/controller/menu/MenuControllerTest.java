@@ -2,7 +2,6 @@ package kr.hs.dgsw.cns.schoolmealbacksetup.controller.menu;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.service.AuthDetailsService;
-import kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.service.AuthService;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.Vote;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.MenuController;
@@ -10,7 +9,6 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.M
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.MenuRequestRepository;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.service.MenuService;
-import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.service.MenuServiceImpl;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuCategory;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
@@ -18,40 +16,22 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.repository.UserRepository;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.type.UserRole;
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.security.JwtConfiguration;
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.security.JwtProvider;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.context.config.ConfigFileApplicationListener;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
@@ -114,27 +94,22 @@ public class MenuControllerTest {
                 .build();
     }
 
-    @DisplayName("메뉴 추가 테스트")
+    private String token(String id) {
+        return String.format("Bearer %s", jwtProvider.generateAccessToken(id));
+    }
+
+    @DisplayName("메뉴 추가 성공")
     @Test
-    void addMenuTest() throws Exception {
+    void addMenuSuccess() throws Exception {
         // given
         MenuCreationDto menuCreationDto = new MenuCreationDto(MenuCategory.KOREAN, "김밥", "참치 김밥");
         userRepository.save(user());
         lenient().when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user()));
-//        lenient().doReturn(toEntity(menuCreationDto, new HashSet<>()))
-//                .when(menuRequestRepository)
-//                .save(any(MenuRequest.class));
         lenient().when(menuService.addMenu(any(), any()))
                 .thenReturn(new MenuDto(toEntity(menuCreationDto, new HashSet<>())));
 
-//        Authentication authentication = mock(Authentication.class);
-//        SecurityContext securityContext = mock(SecurityContext.class);
-//        when(securityContext.getAuthentication())
-//                .thenReturn(authentication);
-//        SecurityContextHolder.setContext(securityContext);
-
-        String token = String.format("Bearer %s", jwtProvider.generateAccessToken("1"));
+        String token = token("1");
         String content = objectMapper.writeValueAsString(menuCreationDto);
 
         // when

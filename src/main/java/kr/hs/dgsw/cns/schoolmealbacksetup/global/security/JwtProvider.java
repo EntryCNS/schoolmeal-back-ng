@@ -46,7 +46,7 @@ public class JwtProvider {
         return parseToken(token).get("type", String.class);
     }
 
-    private String generateToken(String type, String loginId, Long expWtihSecond) {
+    private String generateToken(String type, String loginId, Long expWithSecond) {
         final Date tokenCreationDate = new Date();
 
         return Jwts.builder()
@@ -54,7 +54,7 @@ public class JwtProvider {
                 .setSubject(loginId)
                 .claim("type", type)
                 .setIssuedAt(tokenCreationDate)
-                .setIssuedAt(new Date(tokenCreationDate.getTime() + expWtihSecond * 1000))
+                .setIssuedAt(new Date(tokenCreationDate.getTime() + expWithSecond * 1000))
                 .compact();
     }
 
