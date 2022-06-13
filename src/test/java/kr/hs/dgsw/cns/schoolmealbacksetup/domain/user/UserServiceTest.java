@@ -64,11 +64,14 @@ public class UserServiceTest {
         assertThat(found).isEqualTo(expected);
     }
 
-    private final MockMultipartFile userProfileImage = new MockMultipartFile("test.png", "".getBytes());
+    private final MockMultipartFile userProfileImage = new MockMultipartFile("test.png", "TEST FILE".getBytes());
 
     @DisplayName("사용자 프로필사진 설정")
     @Test @Order(1)
     public void setUserProfileImage() {
+        new File("../storages/profile/img").mkdirs();
+        try { new File("../storages/profile/img/default").createNewFile(); } catch (IOException ignored) {}
+
         userService.setUserImage(user.getId(), userProfileImage);
     }
 

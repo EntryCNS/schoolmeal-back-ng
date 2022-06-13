@@ -26,10 +26,10 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserFacade userFacade;
-    private static final File defaultProfileImage = new File("/storages/profile/img/default");
+    private static final File defaultProfileImage = new File("../storages/profile/img/default");
 
     private File getProfileImageFile(long userId) {
-        return new File(String.format("/storages/profile/img/%d", userId));
+        return new File(String.format("../storages/profile/img/%d", userId));
     }
 
     private Optional<File> getProfileImageOptional(long userId) {
