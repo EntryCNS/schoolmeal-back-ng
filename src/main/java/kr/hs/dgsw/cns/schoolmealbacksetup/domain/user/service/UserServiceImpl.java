@@ -1,91 +1,113 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.service;
 
-
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
-import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.presentation.dto.response.UserImageAcceptedDto;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.facade.UserFacade;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.presentation.dto.response.UserResponseDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.repository.UserRepository;
+import kr.hs.dgsw.cns.schoolmealbacksetup.global.response.ResponseLink;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import javax.imageio.ImageIO;
-import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 public class UserServiceImpl implements UserService {
+    private final UserRepository userRepository;
+    private final UserFacade userFacade;
+    private static final File defaultProfileImage = new File("/storages/profile/img/default");
 
-    private UserRepository userRepository;
+    private File getProfileImageFile(long userId) {
+        return new File(String.format("/storages/profile/img/%d", userId));
+    }
 
-    private UserImageAcceptedDto userImageAcceptedDto;
+    private Optional<File> getProfileImageOptional(long userId) {
+        File file = getProfileImageFile(userId);
+        if(!file.exists()) return Optional.empty();
+
+        return Optional.of(file);
+    }
 
     //프사 가져오기
     @Override
     @Transactional(readOnly = true)
-    public byte[] getUserImage(long userId) {
-        try (final ByteArrayInputStream inputStream
-                     = new ByteArrayInputStream(getUserImage(userId)))  {
-            ImageIO.write(ImageIO.read(inputStream),
-                    "", new File(""));
-        } catch (IOException e) {
-            e.printStackTrace();
+    public ResponseEntity<StreamingResponseBody> getUserImage(long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(User.UserNotFoundException::new);
 
-            //파일이 빈 것이 들어올 경우 기본 프로필 사진으로 변경.
-//            if(getUserImage(userId).length <= 0){
-//                userRepository.deleteById(userId);
-//            }
-        }
+        File imageFile = getProfileImageOptional(user.getId())
+                .orElse(defaultProfileImage);
 
-        //파일이 빈 것이 들어올 경우 기본 프로필 사진으로 변경.
-        if(getUserImage(userId).length <= 0){
-            userRepository.deleteById(userId);
-        }
-        else{
+        StreamingResponseBody response = (outputStream) -> {
+            FileInputStream imageFileReader = new FileInputStream(imageFile);
+            byte[] buffer = new byte[1024];
+            int read;
+            while((read = imageFileReader.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, read);
+                outputStream.flush();
+            }
+            imageFileReader.close();
+            outputStream.close();
+        };
 
-        }
-
-
-        return new byte[];
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     //사용자 프로필 변경하기
     @Override
-    public UserImageAcceptedDto setUserImage(long userId, MultipartFile profileImage) {
+    public void setUserImage(long userId, MultipartFile profileImage) {
+        userFacade.verifyQueryUserEquals(userId);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow();
-        return UserImageAcceptedDto.fromUser(user);
+        File profileFile = getProfileImageFile(userId);
+        if(profileFile.exists()) profileFile.delete();
+
+        try {
+            profileFile.createNewFile();
+            FileOutputStream profileWriter = new FileOutputStream(profileFile);
+            profileWriter.write(profileImage.getBytes());
+            profileWriter.close();
+        }catch (IOException ex) {
+            throw new User.UserProfileCreationException();
+        }
     }
 
     //기본 사진으로 되돌리기
     @Override
     public void resetUserImage(long userId) {
+        userFacade.verifyQueryUserEquals(userId);
 
-        //delete 하는 방법
-        userRepository.deleteById(userId);
+        File imageFileToDelete = getProfileImageOptional(userId)
+                .orElseThrow(User.UserProfileAlreadyDefaultException::new);
+        imageFileToDelete.delete();
     }
 
     //유저 조회
     @Override
     public UserResponseDto getUser(Long userId) {
+        User targetUser = userRepository.findById(userId)
+                .orElseThrow(User.UserNotFoundException::new);
 
-        return null;
+        return UserResponseDto.builder()
+                .name(targetUser.getName())
+                .profileImage(new ResponseLink("link", "GET", String.format("/users/%d/profile-image", targetUser.getId())))
+                .build();
     }
 
-
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        User user = userRepository.findAll().orElseThrow(()-> new UsernameNotFoundException("not found username : " + username));
-
-        return loadUserByUsername(username);
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+        return userRepository.findByOpenId(userName)
+                .orElseThrow(User.UserNotFoundException::new);
     }
 
 }
