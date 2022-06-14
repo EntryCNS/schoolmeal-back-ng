@@ -110,8 +110,6 @@ public class MenuControllerTest {
                 .build();
     }
 
-
-
     private String token(String id) {
         return String.format("Bearer %s", jwtProvider.generateAccessToken(id));
     }
@@ -201,5 +199,38 @@ public class MenuControllerTest {
                 .andExpect(jsonPath("$.menu_name", "우동").exists())
                 .andExpect(jsonPath("$.description", "맛있는 우동").exists())
                 .andExpect(jsonPath("$.kind", MenuCategory.JAPANESE).exists());
+    }
+
+    @DisplayName("메뉴 투표 성공")
+    @Test
+    void addVoteSuccess() throws Exception {
+        // given
+        // 유저 저장한 후 해당 메뉴에 투표를 진행한다.
+        userRepository.save(user());
+        MenuRequest menuRequest = toEntity(
+                "쇠고기야채죽",
+                "간 좀 맞춰주세요",
+                MenuCategory.KOREAN,
+                new HashSet<>()
+        );
+        menuRequestRepository.save(menuRequest);
+
+        lenient().when(menuRequestRepository.findById(anyLong()))
+                .thenReturn(Optional.of(menuRequest));
+        lenient().when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(user()));
+        String token = token("1");
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                post("/menu/1/votes")
+                        .header("Authorization", token)
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        resultActions
+                .andDo(print())
+                .andExpect(status().isNoContent());
     }
 }
