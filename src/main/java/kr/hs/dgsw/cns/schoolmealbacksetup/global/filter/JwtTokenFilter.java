@@ -1,5 +1,8 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.global.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
+import kr.hs.dgsw.cns.schoolmealbacksetup.global.exception.BusinessException;
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.security.JwtProvider;
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.security.TokenException;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +31,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
             filterChain.doFilter(request, response);
-        } catch (TokenException e) {
+        } catch (TokenException | User.UnauthorizedException e) {
             filterException(e, response);
         }
     }
 
-    private void filterException(TokenException exception, HttpServletResponse response)
+    private void filterException(BusinessException exception, HttpServletResponse response)
             throws IOException {
         response.setStatus(exception.getStatus().value());
         response.setCharacterEncoding("UTF-8");
