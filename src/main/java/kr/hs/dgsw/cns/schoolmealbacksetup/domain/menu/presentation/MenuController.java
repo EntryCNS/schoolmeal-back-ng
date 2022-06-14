@@ -33,11 +33,6 @@ public class MenuController {
     @ResponseStatus(HttpStatus.CREATED)
     public MenuDto addMenu(@RequestBody @Valid MenuCreationDto menuCreationDto,
                            Authentication authentication) {
-        if (authentication == null
-                || !(authentication.getPrincipal() instanceof User)) {
-            throw new User.UnauthorizedException();
-        }
-
         return menuService.addMenu((User) authentication.getPrincipal(), menuCreationDto);
     }
 }

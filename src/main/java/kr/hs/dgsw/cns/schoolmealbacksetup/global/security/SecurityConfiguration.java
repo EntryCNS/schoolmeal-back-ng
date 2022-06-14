@@ -1,5 +1,6 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.global.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.filter.JwtTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +18,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
     private final JwtProvider jwtProvider;
+    private final ObjectMapper objectMapper;
 
     // 로그인 로직, 회원가입 로직 등에서 활용되는 비밀번호 인코더
     @Bean
@@ -53,12 +56,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .anyRequest().authenticated()
-
                 .and()
                 .addFilterBefore(new JwtTokenFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
-
-
     }
-
-
 }
