@@ -41,6 +41,7 @@ import java.util.Set;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -85,17 +86,31 @@ public class MenuControllerTest {
     }
 
     private MenuRequest toEntity(MenuCreationDto menuCreationDto, Set<Vote> votes) {
+        return toEntity(
+                menuCreationDto.getMenuName(),
+                menuCreationDto.getDescription(),
+                menuCreationDto.getKind(),
+                votes
+        );
+    }
+
+    private MenuRequest toEntity(String menuName,
+                                 String description,
+                                 MenuCategory menuCategory,
+                                 Set<Vote> votes) {
         return MenuRequest.builder()
                 .id(1L)
                 .createAt(dateTime)
                 .user(user())
-                .menuName(menuCreationDto.getMenuName())
-                .content(menuCreationDto.getDescription())
-                .menuCategory(menuCreationDto.getKind())
+                .menuName(menuName)
+                .content(description)
+                .menuCategory(menuCategory)
                 .state(MenuState.STANDBY)
                 .votes(votes)
                 .build();
     }
+
+
 
     private String token(String id) {
         return String.format("Bearer %s", jwtProvider.generateAccessToken(id));
@@ -156,4 +171,35 @@ public class MenuControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
+    @DisplayName("id로 메뉴 조회 성공")
+    @Test
+    void findByIdSuccess() throws Exception {
+        // given
+        MenuRequest menuRequest = toEntity(
+                "우동",
+                "맛있는 우동",
+                MenuCategory.JAPANESE,
+                new HashSet<>()
+        );
+        MenuDto menuDto = new MenuDto(menuRequest);
+        menuRequestRepository.save(
+                menuRequest
+        );
+        lenient().when(menuService.findById(anyLong()))
+                .thenReturn(menuDto);
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                get("/menu/1")
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        resultActions
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.menu_name", "우동").exists())
+                .andExpect(jsonPath("$.description", "맛있는 우동").exists())
+                .andExpect(jsonPath("$.kind", MenuCategory.JAPANESE).exists());
+    }
 }
