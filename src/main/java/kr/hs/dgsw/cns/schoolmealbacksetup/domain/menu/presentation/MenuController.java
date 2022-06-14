@@ -41,4 +41,11 @@ public class MenuController {
         return menuService.findById(menuId);
     }
 
+    @PostMapping("/{menu-id}/votes")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addVote(@PathVariable(name = "menu-id") long menuId,
+                        Authentication authentication) {
+        menuService.addVote((User) authentication.getPrincipal(), menuId);
+    }
+
 }
