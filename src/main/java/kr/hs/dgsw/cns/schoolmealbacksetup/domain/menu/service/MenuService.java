@@ -48,21 +48,21 @@ public interface MenuService {
      * <h2>투표 추가</h2>
      * 메뉴 id로 해당 메뉴에 투표를 합니다
      * @param menuId 메뉴 id
-     * @param voteId 투표자
+     * @param user 투표자
      * @throws kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest.CannotFound
      * {@code menuId}를 가진 메뉴를 찾지 못한 경우 발생합니다
      */
-    void addVote(VoteId voteId, long menuId);
+    void addVote(User user, long menuId);
 
     /**
      * <h2>투표 취소</h2>
      * 메뉴 id로 해당 메뉴에 했던 투표를 취소합니다
      * @param menuId 메뉴 id
-     * @param voteId 투표 취소자
+     * @param user 투표 취소자
      * @throws kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest.CannotFound
      * {@code menuId}를 가진 메뉴를 찾지 못한 경우 발생합니다
      */
-    void cancelVote(VoteId voteId, long menuId);
+    void cancelVote(User user, long menuId);
 
     /**
      * <h2>메뉴 상태 설정</h2>

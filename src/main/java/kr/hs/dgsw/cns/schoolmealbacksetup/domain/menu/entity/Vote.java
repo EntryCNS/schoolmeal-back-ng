@@ -35,7 +35,7 @@ public class Vote {
     
     public static class NeverVoted extends BusinessException {
         public NeverVoted() {
-            super(HttpStatus.NOT_FOUND, "투표를 하지 않았습니다.");
+            super(HttpStatus.CONFLICT, "투표를 하지 않았습니다.");
         }
     }
 

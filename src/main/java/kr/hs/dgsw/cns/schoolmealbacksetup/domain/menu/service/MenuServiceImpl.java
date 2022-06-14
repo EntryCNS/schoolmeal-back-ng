@@ -68,14 +68,15 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional
-    public void addVote(VoteId voteId, long menuId) {
+    public void addVote(User user, long menuId) {
         MenuRequest menuRequest = menuRequestRepository.findById(menuId)
                 .orElseThrow(() -> new MenuRequest.CannotFound(menuId));
 
-        if (voteRepository.existsById(voteId)) {
+        if (voteRepository.existsById_Id_User(user)) {
             // 존재한다면 이미 투표되었다고 409 예외 발생
             throw new Vote.AlreadyVoted();
         }
+        VoteId voteId = new VoteId(new AuthId(user));
 
         Vote vote = Vote.builder()
                 .id(voteId)
@@ -87,12 +88,11 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional
-    public void cancelVote(VoteId voteId, long menuId) {
+    public void cancelVote(User user, long menuId) {
         MenuRequest menuRequest = menuRequestRepository.findById(menuId)
                 .orElseThrow(() -> new MenuRequest.CannotFound(menuId));
-
-        Vote vote = voteRepository.findByIdAndMenuRequestId(voteId, menuId)
-                .orElseThrow(Vote.NeverVoted::new);
+        Vote vote = voteRepository.findById_Id_User_AndMenuRequest(user, menuRequest)
+                        .orElseThrow(Vote.NeverVoted::new);
 
         menuRequest.removeVote(vote);
         voteRepository.delete(vote);
