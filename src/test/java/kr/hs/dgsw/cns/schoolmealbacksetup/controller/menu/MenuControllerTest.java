@@ -110,8 +110,8 @@ public class MenuControllerTest {
                 .build();
     }
 
-    private String token(String id) {
-        return String.format("Bearer %s", jwtProvider.generateAccessToken(id));
+    private String token() {
+        return String.format("Bearer %s", jwtProvider.generateAccessToken("1"));
     }
 
     @DisplayName("메뉴 추가 성공")
@@ -124,7 +124,7 @@ public class MenuControllerTest {
         lenient().when(menuService.addMenu(any(), any()))
                 .thenReturn(new MenuDto(toEntity(menuCreationDto, new HashSet<>())));
 
-        String token = token("1");
+        String token = token();
         String content = objectMapper.writeValueAsString(menuCreationDto);
 
         // when
@@ -152,7 +152,7 @@ public class MenuControllerTest {
         MenuCreationDto menuCreationDto = new MenuCreationDto(MenuCategory.KOREAN, "김밥", "참치 김밥");
         lenient().when(menuService.addMenu(any(), any()))
                 .thenReturn(new MenuDto(toEntity(menuCreationDto, new HashSet<>())));
-        String token = token("2");
+        String token = token();
         String content = objectMapper.writeValueAsString(menuCreationDto);
 
         // when
@@ -219,7 +219,7 @@ public class MenuControllerTest {
                 .thenReturn(Optional.of(menuRequest));
         lenient().when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user()));
-        String token = token("1");
+        String token = token();
 
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -232,5 +232,34 @@ public class MenuControllerTest {
         resultActions
                 .andDo(print())
                 .andExpect(status().isNoContent());
+    }
+
+    @DisplayName("메뉴 투표 실패")
+    @Test
+    void addVoteFailed() throws Exception {
+        // given
+        MenuRequest menuRequest = toEntity(
+                "쇠고기야채죽",
+                "간 좀 맞춰주세요",
+                MenuCategory.KOREAN,
+                new HashSet<>()
+        );
+        menuRequestRepository.save(menuRequest);
+
+        lenient().when(menuRequestRepository.findById(anyLong()))
+                .thenReturn(Optional.of(menuRequest));
+        String token = token();
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                post("/menu/1/votes")
+                        .header("Authorization", token)
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        resultActions
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
     }
 }
