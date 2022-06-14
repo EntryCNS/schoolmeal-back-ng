@@ -139,7 +139,7 @@ public class MenuServiceTest {
                 .thenReturn(Optional.of(menuRequest));
 
         // when
-        menuService.addVote(new VoteId(new AuthId(user())), id);
+        menuService.addVote(user(), id);
 
         // then
         assertEquals(1, menuRequest.getVotes().size());
@@ -149,23 +149,18 @@ public class MenuServiceTest {
     @Test
     void cancelVoteMenu() {
         // given
+        User user = user();
         MenuCreationDto menuCreationDto = menuCreationDto("치킨", "아주 훌륭한 닭다리가 먹고 싶습니다.");
-        Vote vote = toEntity(toEntity(menuCreationDto));
-        lenient().doReturn(vote).when(voteRepository)
-                .save(any(Vote.class));
-        voteRepository.save(any(Vote.class));
-        
-        MenuRequest menuRequest = toEntity(menuCreationDto, new HashSet<>(Set.of(vote)));
-        lenient().doReturn(menuRequest).when(menuRequestRepository)
-                        .save(any(MenuRequest.class));
-        menuRequestRepository.save(any(MenuRequest.class));
+        MenuRequest menuRequest = toEntity(menuCreationDto, new HashSet<>());
+        Vote vote = toEntity(menuRequest);
+        menuRequest.addVote(vote);
 
-        lenient().when(menuRequestRepository.findById(1L))
+        lenient().when(menuRequestRepository.findById(anyLong()))
                 .thenReturn(Optional.of(menuRequest));
-        lenient().when(voteRepository.findByIdAndMenuRequestId(vote.getId(), 1L))
+        lenient().when(voteRepository.findById_Id_User_AndMenuRequest(user, menuRequest))
                 .thenReturn(Optional.of(vote));
         // when
-        menuService.cancelVote(vote.getId(), 1L);
+        menuService.cancelVote(user, anyLong());
 
         // then
         assertEquals(0, menuRequest.getVotes().size());
@@ -173,7 +168,6 @@ public class MenuServiceTest {
         // verity
         verify(voteRepository, times(1))
                 .delete(vote);
-
     }
 
     @DisplayName("메뉴 상태 업데이트")
