@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Optional;
 
 @Service
@@ -70,12 +71,11 @@ public class UserServiceImpl implements UserService {
         userFacade.verifyQueryUserEquals(userId);
 
         File profileFile = getProfileImageFile(userId);
-        if(profileFile.exists()) {
-            if(!profileFile.delete()) throw new User.UserProfileCreationException();
-        }
 
         try {
+            if(!Files.deleteIfExists(profileFile.toPath())) throw new User.UserProfileCreationException();
             if(!profileFile.createNewFile()) throw new User.UserProfileCreationException();
+
             FileOutputStream profileWriter = new FileOutputStream(profileFile);
             profileWriter.write(profileImage.getBytes());
             profileWriter.close();
@@ -91,7 +91,10 @@ public class UserServiceImpl implements UserService {
 
         File imageFileToDelete = getProfileImageOptional(userId)
                 .orElseThrow(User.UserProfileAlreadyDefaultException::new);
-        if(!imageFileToDelete.delete()) throw new User.UserProfileResetFailedException();;
+
+        try {
+            Files.delete(imageFileToDelete.toPath());
+        }catch (IOException ex) { throw new User.UserProfileResetFailedException(); }
     }
 
     //유저 조회
