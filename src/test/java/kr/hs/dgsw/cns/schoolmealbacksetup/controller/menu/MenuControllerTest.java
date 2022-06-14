@@ -17,6 +17,7 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.type.UserRole;
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.security.JwtConfiguration;
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.security.JwtProvider;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -71,6 +72,8 @@ public class MenuControllerTest {
 
     @Mock
     private MenuRequestRepository menuRequestRepository;
+    
+    private final LocalDateTime dateTime = LocalDateTime.now();
 
     private User user() {
         return User.builder()
@@ -84,7 +87,7 @@ public class MenuControllerTest {
     private MenuRequest toEntity(MenuCreationDto menuCreationDto, Set<Vote> votes) {
         return MenuRequest.builder()
                 .id(1L)
-                .createAt(LocalDateTime.now())
+                .createAt(dateTime)
                 .user(user())
                 .menuName(menuCreationDto.getMenuName())
                 .content(menuCreationDto.getDescription())
@@ -99,11 +102,10 @@ public class MenuControllerTest {
     }
 
     @DisplayName("메뉴 추가 성공")
-    @Test
+    @RepeatedTest(10)
     void addMenuSuccess() throws Exception {
         // given
         MenuCreationDto menuCreationDto = new MenuCreationDto(MenuCategory.KOREAN, "김밥", "참치 김밥");
-        userRepository.save(user());
         lenient().when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user()));
         lenient().when(menuService.addMenu(any(), any()))
@@ -129,4 +131,29 @@ public class MenuControllerTest {
                 .andExpect(jsonPath("$.description", "참치 김밥").exists())
                 .andExpect(jsonPath("$.kind", MenuCategory.KOREAN).exists());
     }
+
+    @DisplayName("메뉴 추가 실패")
+    @Test
+    void addMenuFailed() throws Exception {
+        // given
+        MenuCreationDto menuCreationDto = new MenuCreationDto(MenuCategory.KOREAN, "김밥", "참치 김밥");
+        lenient().when(menuService.addMenu(any(), any()))
+                .thenReturn(new MenuDto(toEntity(menuCreationDto, new HashSet<>())));
+        String token = token("2");
+        String content = objectMapper.writeValueAsString(menuCreationDto);
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                post("/menu")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content)
+                        .header("Authorization", token)
+        );
+
+        // then
+        resultActions
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
 }
