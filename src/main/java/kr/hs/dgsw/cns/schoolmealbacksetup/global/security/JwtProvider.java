@@ -1,9 +1,6 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.global.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.*;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.service.AuthDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,8 +8,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Component
@@ -39,7 +34,15 @@ public class JwtProvider {
     }
 
     public String extractLoginIdFromToken(String token) {
-        return parseToken(token).getSubject();
+        try {
+            return parseToken(token).getSubject();
+        } catch (SignatureException | MalformedJwtException e) {
+            throw new TokenException("잘못된 Jwt 서명입니다");
+        } catch (ExpiredJwtException e) {
+            throw new TokenException("만료된 토큰입니다");
+        } catch (IllegalArgumentException | UnsupportedJwtException e) {
+            throw new TokenException("비정상적인 토큰입니다");
+        }
     }
 
     public String getTokenType(String token) {
