@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
         File profileFile = getProfileImageFile(userId);
 
         try {
-            if(!Files.deleteIfExists(profileFile.toPath())) throw new User.UserProfileCreationException();
+            if(profileFile.exists()) Files.delete(profileFile.toPath());
             if(!profileFile.createNewFile()) throw new User.UserProfileCreationException();
 
             FileOutputStream profileWriter = new FileOutputStream(profileFile);
