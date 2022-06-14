@@ -103,4 +103,8 @@ public class User implements UserDetails {
     public static class UserProfileCreationException extends BusinessException {
         public UserProfileCreationException() { super(HttpStatus.INTERNAL_SERVER_ERROR, "프로필 사진을 저장하는 데 실패했습니다"); }
     }
+
+    public static class UserProfileResetFailedException extends BusinessException {
+        public UserProfileResetFailedException() { super(HttpStatus.INTERNAL_SERVER_ERROR, "프로필 사진 리셋 도중 오류가 발생했습니다"); }
+    }
 }

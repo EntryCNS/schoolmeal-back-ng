@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
         File imageFile = getProfileImageOptional(user.getId())
                 .orElse(defaultProfileImage);
 
-        StreamingResponseBody response = (outputStream) -> {
+        StreamingResponseBody response = outputStream -> {
             FileInputStream imageFileReader = new FileInputStream(imageFile);
             byte[] buffer = new byte[1024];
             int read;
@@ -70,10 +70,12 @@ public class UserServiceImpl implements UserService {
         userFacade.verifyQueryUserEquals(userId);
 
         File profileFile = getProfileImageFile(userId);
-        if(profileFile.exists()) profileFile.delete();
+        if(profileFile.exists()) {
+            if(!profileFile.delete()) throw new User.UserProfileCreationException();
+        }
 
         try {
-            profileFile.createNewFile();
+            if(!profileFile.createNewFile()) throw new User.UserProfileCreationException();
             FileOutputStream profileWriter = new FileOutputStream(profileFile);
             profileWriter.write(profileImage.getBytes());
             profileWriter.close();
@@ -89,7 +91,7 @@ public class UserServiceImpl implements UserService {
 
         File imageFileToDelete = getProfileImageOptional(userId)
                 .orElseThrow(User.UserProfileAlreadyDefaultException::new);
-        imageFileToDelete.delete();
+        if(!imageFileToDelete.delete()) throw new User.UserProfileResetFailedException();;
     }
 
     //유저 조회

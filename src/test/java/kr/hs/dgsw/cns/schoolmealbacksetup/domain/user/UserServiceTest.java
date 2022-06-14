@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class UserServiceTest {
+class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -49,7 +49,7 @@ public class UserServiceTest {
 
     @DisplayName("사용자 가져오기")
     @Test @Order(0)
-    public void getUser() {
+    void getUser() {
         when(userRepository.findById(user.getId())).thenReturn(optionalUser);
 
         UserResponseDto found = userService.getUser(user.getId());
@@ -68,16 +68,17 @@ public class UserServiceTest {
 
     @DisplayName("사용자 프로필사진 설정")
     @Test @Order(1)
-    public void setUserProfileImage() {
+    void setUserProfileImage() {
         new File("../storages/profile/img").mkdirs();
         try { new File("../storages/profile/img/default").createNewFile(); } catch (IOException ignored) {}
 
         userService.setUserImage(user.getId(), userProfileImage);
+        assertThatNoException();
     }
 
     @DisplayName("사용자 프로필사진 조회 (커스텀)")
     @Test @Order(2)
-    public void getUserProfileImageWithCustom() {
+    void getUserProfileImageWithCustom() {
         when(userRepository.findById(user.getId())).thenReturn(optionalUser);
 
         ResponseEntity<StreamingResponseBody> response = userService.getUserImage(user.getId());
@@ -94,13 +95,14 @@ public class UserServiceTest {
 
     @DisplayName("사용자 프로필사진 초기화")
     @Test @Order(3)
-    public void resetUserProfileImage() {
+    void resetUserProfileImage() {
         userService.resetUserImage(user.getId());
+        assertThatNoException();
     }
 
     @DisplayName("사용자 프로필사진 조회 (기본값)")
     @Test @Order(4)
-    public void getUserProfileImageWithDefault() {
+    void getUserProfileImageWithDefault() {
         when(userRepository.findById(user.getId())).thenReturn(optionalUser);
 
         ResponseEntity<StreamingResponseBody> response = userService.getUserImage(user.getId());
