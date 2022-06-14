@@ -1,9 +1,11 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation;
 
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.VoteId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuCreationDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuListDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.service.MenuService;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.AuthId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +47,20 @@ public class MenuController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addVote(@PathVariable(name = "menu-id") long menuId,
                         Authentication authentication) {
-        menuService.addVote((User) authentication.getPrincipal(), menuId);
+        VoteId voteId = new VoteId(
+                new AuthId((User) authentication.getPrincipal())
+        );
+        menuService.addVote(voteId, menuId);
+    }
+
+    @DeleteMapping("/{menu-id}/votes")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteVote(@PathVariable(name = "menu-id") long menuId,
+                           Authentication authentication) {
+        VoteId voteId = new VoteId(
+                new AuthId((User) authentication.getPrincipal())
+        );
+        menuService.cancelVote(voteId, menuId);
     }
 
 }

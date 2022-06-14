@@ -139,7 +139,7 @@ public class MenuServiceTest {
                 .thenReturn(Optional.of(menuRequest));
 
         // when
-        menuService.addVote(user(), id);
+        menuService.addVote(new VoteId(new AuthId(user())), id);
 
         // then
         assertEquals(1, menuRequest.getVotes().size());

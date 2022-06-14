@@ -68,11 +68,9 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional
-    public void addVote(User user, long menuId) {
+    public void addVote(VoteId voteId, long menuId) {
         MenuRequest menuRequest = menuRequestRepository.findById(menuId)
                 .orElseThrow(() -> new MenuRequest.CannotFound(menuId));
-
-        VoteId voteId = new VoteId(new AuthId(user));
 
         if (voteRepository.existsById(voteId)) {
             // 존재한다면 이미 투표되었다고 409 예외 발생
