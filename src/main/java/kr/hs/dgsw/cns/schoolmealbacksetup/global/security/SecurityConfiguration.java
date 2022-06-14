@@ -49,7 +49,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/users/signup").permitAll()
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/menu").permitAll()
+                .antMatchers(HttpMethod.GET, "/menu", "/menu/*").permitAll()
                 .and()
                 .authorizeRequests()
                 .antMatchers("/menu/**/state").hasRole("ADMIN")

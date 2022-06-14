@@ -25,7 +25,7 @@ public class MenuController {
     private final MenuService menuService;
 
     @GetMapping
-    public MenuListDto findAllMenu(@RequestParam long page) {
+    public MenuListDto findAllMenu(@RequestParam(defaultValue = "1") long page) {
         return menuService.findAllMenus(page);
     }
 
@@ -35,4 +35,10 @@ public class MenuController {
                            Authentication authentication) {
         return menuService.addMenu((User) authentication.getPrincipal(), menuCreationDto);
     }
+
+    @GetMapping("/{menu-id}")
+    public MenuDto findById(@PathVariable(name = "menu-id") long menuId) {
+        return menuService.findById(menuId);
+    }
+
 }
