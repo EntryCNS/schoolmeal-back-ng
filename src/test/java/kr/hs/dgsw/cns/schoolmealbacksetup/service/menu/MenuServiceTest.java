@@ -76,9 +76,9 @@ public class MenuServiceTest {
                 .build();
     }
 
-    private Vote toEntity(MenuRequest menuRequest) {
+    private Vote toEntity(MenuRequest menuRequest, User user) {
         return Vote.builder()
-                .id(new VoteId(new AuthId(user())))
+                .id(new VoteId(new AuthId(user)))
                 .menuRequest(menuRequest)
                 .build();
     }
@@ -152,7 +152,7 @@ public class MenuServiceTest {
         User user = user();
         MenuCreationDto menuCreationDto = menuCreationDto("치킨", "아주 훌륭한 닭다리가 먹고 싶습니다.");
         MenuRequest menuRequest = toEntity(menuCreationDto, new HashSet<>());
-        Vote vote = toEntity(menuRequest);
+        Vote vote = toEntity(menuRequest, user);
         menuRequest.addVote(vote);
 
         lenient().when(menuRequestRepository.findById(anyLong()))
