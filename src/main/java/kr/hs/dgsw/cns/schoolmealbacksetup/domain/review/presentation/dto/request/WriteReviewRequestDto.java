@@ -8,6 +8,7 @@ import lombok.Getter;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 @Getter
 @Builder
@@ -15,16 +16,18 @@ import javax.validation.constraints.NotNull;
 public class WriteReviewRequestDto {
 
     @NotNull
-    private String date;
+    private LocalDate date;
 
     @NotNull
     private ReviewTime reviewTime;
 
     @NotNull
-    private String massage;
+    private String message;
 
     @NotNull
     @Max(5)
     @Min(1)
     private int rate;
+
+
 }

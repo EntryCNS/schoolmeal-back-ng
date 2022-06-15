@@ -6,14 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
+
 @Getter
 @AllArgsConstructor
 @Builder
 public class WriteReviewResponseDto {
-    @JsonProperty("author_id")
-    private String authorId;
 
-    private String date;
+    private LocalDate date;
 
     @JsonProperty("review_time")
     private ReviewTime reviewTime;
