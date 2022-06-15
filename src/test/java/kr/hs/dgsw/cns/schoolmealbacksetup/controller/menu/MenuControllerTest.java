@@ -4,13 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.service.AuthDetailsService;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.Vote;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.VoteId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.MenuController;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuCreationDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.MenuRequestRepository;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.VoteRepository;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.service.MenuService;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuCategory;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.AuthId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.repository.UserRepository;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.type.UserRole;
@@ -40,8 +43,7 @@ import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -73,6 +75,9 @@ public class MenuControllerTest {
 
     @Mock
     private MenuRequestRepository menuRequestRepository;
+
+    @Mock
+    private VoteRepository voteRepository;
     
     private final LocalDateTime dateTime = LocalDateTime.now();
 
@@ -85,12 +90,12 @@ public class MenuControllerTest {
                 .build();
     }
 
-    private MenuRequest toEntity(MenuCreationDto menuCreationDto, Set<Vote> votes) {
+    private MenuRequest toEntity(MenuCreationDto menuCreationDto) {
         return toEntity(
                 menuCreationDto.getMenuName(),
                 menuCreationDto.getDescription(),
                 menuCreationDto.getKind(),
-                votes
+                new HashSet<>()
         );
     }
 
@@ -114,6 +119,10 @@ public class MenuControllerTest {
         return String.format("Bearer %s", jwtProvider.generateAccessToken("1"));
     }
 
+    private Vote vote(MenuRequest menuRequest, User user) {
+        return new Vote(new VoteId(new AuthId(user)), menuRequest);
+    }
+
     @DisplayName("메뉴 추가 성공")
     @RepeatedTest(10)
     void addMenuSuccess() throws Exception {
@@ -122,7 +131,7 @@ public class MenuControllerTest {
         lenient().when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user()));
         lenient().when(menuService.addMenu(any(), any()))
-                .thenReturn(new MenuDto(toEntity(menuCreationDto, new HashSet<>())));
+                .thenReturn(new MenuDto(toEntity(menuCreationDto)));
 
         String token = token();
         String content = objectMapper.writeValueAsString(menuCreationDto);
@@ -151,7 +160,7 @@ public class MenuControllerTest {
         // given
         MenuCreationDto menuCreationDto = new MenuCreationDto(MenuCategory.KOREAN, "김밥", "참치 김밥");
         lenient().when(menuService.addMenu(any(), any()))
-                .thenReturn(new MenuDto(toEntity(menuCreationDto, new HashSet<>())));
+                .thenReturn(new MenuDto(toEntity(menuCreationDto)));
         String token = token();
         String content = objectMapper.writeValueAsString(menuCreationDto);
 
@@ -180,9 +189,6 @@ public class MenuControllerTest {
                 new HashSet<>()
         );
         MenuDto menuDto = new MenuDto(menuRequest);
-        menuRequestRepository.save(
-                menuRequest
-        );
         lenient().when(menuService.findById(anyLong()))
                 .thenReturn(menuDto);
 
@@ -205,8 +211,6 @@ public class MenuControllerTest {
     @Test
     void addVoteSuccess() throws Exception {
         // given
-        // 유저 저장한 후 해당 메뉴에 투표를 진행한다.
-        userRepository.save(user());
         MenuRequest menuRequest = toEntity(
                 "쇠고기야채죽",
                 "간 좀 맞춰주세요",
@@ -261,5 +265,110 @@ public class MenuControllerTest {
         resultActions
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
+    }
+
+    @DisplayName("중복된 메뉴 투표")
+    @Test
+    void voteOverlap() throws Exception {
+        // given
+        User user = user();
+        MenuRequest menuRequest = toEntity(
+                "쇠고기야채죽",
+                "간 좀 맞춰주세요",
+                MenuCategory.KOREAN,
+                new HashSet<>()
+        );
+        Vote vote = vote(menuRequest, user);
+        menuRequest.addVote(vote);
+
+        lenient().when(menuRequestRepository.findById(anyLong()))
+                .thenReturn(Optional.of(menuRequest));
+        lenient().when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(user));
+        lenient().doThrow(new Vote.AlreadyVoted())
+                .when(menuService)
+                .addVote(eq(user), anyLong());
+
+        String token = token();
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                post("/menu/1/votes")
+                        .header("Authorization", token)
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        resultActions
+                .andDo(print())
+                .andExpect(status().isConflict());
+    }
+
+    @DisplayName("메뉴 투표 취소 성공")
+    @Test
+    void cancelVoteSuccess() throws Exception {
+        // given
+        User user = user();
+        MenuRequest menuRequest = toEntity(
+                "차돌박이된장찌개",
+                "차돌박이를 넣어 진한 된장찌개",
+                MenuCategory.KOREAN,
+                new HashSet<>()
+        );
+        Vote vote = vote(menuRequest, user);
+        menuRequest.addVote(vote);
+
+        lenient().when(menuRequestRepository.findById(anyLong()))
+                .thenReturn(Optional.of(menuRequest));
+        lenient().when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(user));
+        lenient().doNothing()
+                .when(menuService)
+                .cancelVote(eq(user), anyLong());
+
+        String token = token();
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                delete("/menu/1/votes")
+                        .header("Authorization", token)
+        );
+
+        // then
+        resultActions
+                .andDo(print())
+                .andExpect(status().isNoContent());
+    }
+
+    @DisplayName("메뉴 투표 취소 실패")
+    @Test
+    void cancelVoteFailed() throws Exception {
+        // given
+        User user = user();
+        MenuRequest menuRequest = toEntity(
+                "차돌박이된장찌개",
+                "차돌박이를 넣어 진한 된장찌개",
+                MenuCategory.KOREAN,
+                new HashSet<>()
+        );
+
+        lenient().when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(user));
+        lenient().doThrow(new Vote.NeverVoted())
+                .when(menuService)
+                .cancelVote(eq(user), anyLong());
+
+        String token = token();
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                delete("/menu/1/votes")
+                        .header("Authorization", token)
+        );
+
+        // then
+        resultActions
+                .andDo(print())
+                .andExpect(status().isConflict());
     }
 }
