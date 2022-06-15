@@ -10,7 +10,6 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.M
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuStateDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.MenuRequestRepository;
-import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.VoteRepository;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.service.MenuService;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuCategory;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState;
@@ -76,9 +75,6 @@ public class MenuControllerTest {
 
     @Mock
     private MenuRequestRepository menuRequestRepository;
-
-    @Mock
-    private VoteRepository voteRepository;
     
     private final LocalDateTime dateTime = LocalDateTime.now();
 
@@ -137,8 +133,6 @@ public class MenuControllerTest {
                 .thenReturn(Optional.of(user()));
         lenient().when(menuService.addMenu(any(), any()))
                 .thenReturn(new MenuDto(toEntity(menuCreationDto)));
-
-        String token = token();
         String content = objectMapper.writeValueAsString(menuCreationDto);
 
         // when
@@ -146,7 +140,7 @@ public class MenuControllerTest {
                 post("/menu")
                         .content(content)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", token)
+                        .header("Authorization", token())
                         .accept(MediaType.APPLICATION_JSON)
         );
 
@@ -166,7 +160,6 @@ public class MenuControllerTest {
         MenuCreationDto menuCreationDto = new MenuCreationDto(MenuCategory.KOREAN, "김밥", "참치 김밥");
         lenient().when(menuService.addMenu(any(), any()))
                 .thenReturn(new MenuDto(toEntity(menuCreationDto)));
-        String token = token();
         String content = objectMapper.writeValueAsString(menuCreationDto);
 
         // when
@@ -174,7 +167,7 @@ public class MenuControllerTest {
                 post("/menu")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(content)
-                        .header("Authorization", token)
+                        .header("Authorization", token())
         );
 
         // then
@@ -228,12 +221,11 @@ public class MenuControllerTest {
                 .thenReturn(Optional.of(menuRequest));
         lenient().when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user()));
-        String token = token();
 
         // when
         ResultActions resultActions = mockMvc.perform(
                 post("/menu/1/votes")
-                        .header("Authorization", token)
+                        .header("Authorization", token())
                         .accept(MediaType.APPLICATION_JSON)
         );
 
@@ -254,15 +246,13 @@ public class MenuControllerTest {
                 new HashSet<>()
         );
         menuRequestRepository.save(menuRequest);
-
         lenient().when(menuRequestRepository.findById(anyLong()))
                 .thenReturn(Optional.of(menuRequest));
-        String token = token();
 
         // when
         ResultActions resultActions = mockMvc.perform(
                 post("/menu/1/votes")
-                        .header("Authorization", token)
+                        .header("Authorization", token())
                         .accept(MediaType.APPLICATION_JSON)
         );
 
@@ -294,12 +284,10 @@ public class MenuControllerTest {
                 .when(menuService)
                 .addVote(eq(user), anyLong());
 
-        String token = token();
-
         // when
         ResultActions resultActions = mockMvc.perform(
                 post("/menu/1/votes")
-                        .header("Authorization", token)
+                        .header("Authorization", token())
                         .accept(MediaType.APPLICATION_JSON)
         );
 
@@ -331,12 +319,10 @@ public class MenuControllerTest {
                 .when(menuService)
                 .cancelVote(eq(user), anyLong());
 
-        String token = token();
-
         // when
         ResultActions resultActions = mockMvc.perform(
                 delete("/menu/1/votes")
-                        .header("Authorization", token)
+                        .header("Authorization", token())
         );
 
         // then
@@ -350,12 +336,6 @@ public class MenuControllerTest {
     void cancelVoteFailed() throws Exception {
         // given
         User user = user();
-        MenuRequest menuRequest = toEntity(
-                "차돌박이된장찌개",
-                "차돌박이를 넣어 진한 된장찌개",
-                MenuCategory.KOREAN,
-                new HashSet<>()
-        );
 
         lenient().when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
@@ -363,12 +343,10 @@ public class MenuControllerTest {
                 .when(menuService)
                 .cancelVote(eq(user), anyLong());
 
-        String token = token();
-
         // when
         ResultActions resultActions = mockMvc.perform(
                 delete("/menu/1/votes")
-                        .header("Authorization", token)
+                        .header("Authorization", token())
         );
 
         // then
@@ -396,15 +374,13 @@ public class MenuControllerTest {
         lenient().doReturn(menuDto)
                 .when(menuService)
                 .updateState(any(), anyLong(), any());
-
-        String token = token();
         String content = objectMapper.writeValueAsString(new MenuStateDto(false));
 
         // when
         ResultActions resultActions = mockMvc.perform(
                 patch("/menu/1/state")
                         .content(content)
-                        .header("Authorization", token)
+                        .header("Authorization", token())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
         );
@@ -435,15 +411,13 @@ public class MenuControllerTest {
         lenient().doReturn(menuDto)
                 .when(menuService)
                 .updateState(any(), anyLong(), any());
-
-        String token = token();
         String content = objectMapper.writeValueAsString(new MenuStateDto(false));
 
         // when
         ResultActions resultActions = mockMvc.perform(
                 patch("/menu/1/state")
                         .content(content)
-                        .header("Authorization", token)
+                        .header("Authorization", token())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
         );
