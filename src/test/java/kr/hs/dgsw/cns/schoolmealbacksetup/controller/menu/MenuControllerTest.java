@@ -53,7 +53,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @MockBean(JpaMetamodelMappingContext.class)
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(MenuController.class)
-public class MenuControllerTest {
+class MenuControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
