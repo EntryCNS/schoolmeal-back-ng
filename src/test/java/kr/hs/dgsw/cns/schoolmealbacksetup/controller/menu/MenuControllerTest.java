@@ -7,6 +7,7 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.Vote;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.VoteId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.MenuController;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuCreationDto;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuStateDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.MenuRequestRepository;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.VoteRepository;
@@ -82,10 +83,14 @@ public class MenuControllerTest {
     private final LocalDateTime dateTime = LocalDateTime.now();
 
     private User user() {
+        return user(UserRole.USER);
+    }
+
+    private User user(UserRole userRole) {
         return User.builder()
                 .id(1L)
                 .name("tester")
-                .role(UserRole.USER)
+                .role(userRole)
                 .openId("open_id")
                 .build();
     }
@@ -371,4 +376,82 @@ public class MenuControllerTest {
                 .andDo(print())
                 .andExpect(status().isConflict());
     }
+
+    @DisplayName("메뉴 상태 지정 성공")
+    @Test
+    void updateMenuStateSuccess() throws Exception {
+        // given
+        User user = user(UserRole.ADMIN);
+        MenuRequest menuRequest = toEntity(
+                "가지나물무침",
+                ".",
+                MenuCategory.KOREAN,
+                new HashSet<>()
+        );
+        menuRequest.setMenuState(MenuState.DENIED);
+        MenuDto menuDto = new MenuDto(menuRequest);
+
+        lenient().when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(user));
+        lenient().doReturn(menuDto)
+                .when(menuService)
+                .updateState(any(), anyLong(), any());
+
+        String token = token();
+        String content = objectMapper.writeValueAsString(new MenuStateDto(false));
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                patch("/menu/1/state")
+                        .content(content)
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        resultActions
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.menuState", MenuState.DENIED).exists());
+    }
+
+    @DisplayName("메뉴 상태 지정 실패")
+    @Test
+    void updateMenuStateFailed() throws Exception {
+        // given
+        User user = user(UserRole.USER);
+        MenuRequest menuRequest = toEntity(
+                "가지나물무침",
+                ".",
+                MenuCategory.KOREAN,
+                new HashSet<>()
+        );
+        menuRequest.setMenuState(MenuState.ALLOWED);
+        MenuDto menuDto = new MenuDto(menuRequest);
+
+        lenient().when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(user));
+        lenient().doReturn(menuDto)
+                .when(menuService)
+                .updateState(any(), anyLong(), any());
+
+        String token = token();
+        String content = objectMapper.writeValueAsString(new MenuStateDto(false));
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                patch("/menu/1/state")
+                        .content(content)
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        resultActions
+                .andDo(print())
+                .andExpect(status().isForbidden());
+    }
+
 }
