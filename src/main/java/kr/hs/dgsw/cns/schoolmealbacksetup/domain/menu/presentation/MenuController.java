@@ -47,20 +47,14 @@ public class MenuController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void addVote(@PathVariable(name = "menu-id") long menuId,
                         Authentication authentication) {
-        VoteId voteId = new VoteId(
-                new AuthId((User) authentication.getPrincipal())
-        );
-        menuService.addVote(voteId, menuId);
+        menuService.addVote((User) authentication.getPrincipal(), menuId);
     }
 
     @DeleteMapping("/{menu-id}/votes")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteVote(@PathVariable(name = "menu-id") long menuId,
                            Authentication authentication) {
-        VoteId voteId = new VoteId(
-                new AuthId((User) authentication.getPrincipal())
-        );
-        menuService.cancelVote(voteId, menuId);
+        menuService.cancelVote((User) authentication.getPrincipal(), menuId);
     }
 
 }
