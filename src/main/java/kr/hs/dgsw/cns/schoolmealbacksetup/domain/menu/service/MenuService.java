@@ -50,6 +50,8 @@ public interface MenuService {
      * @param user 투표자
      * @throws kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest.CannotFound
      * {@code menuId}를 가진 메뉴를 찾지 못한 경우 발생합니다
+     * @throws kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.Vote.AlreadyVoted
+     * {@code menuId}에 이미 투표를 진행한 경우 발생합니다
      */
     void addVote(User user, long menuId);
 
@@ -60,6 +62,8 @@ public interface MenuService {
      * @param user 투표 취소자
      * @throws kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest.CannotFound
      * {@code menuId}를 가진 메뉴를 찾지 못한 경우 발생합니다
+     * @throws kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.Vote.NeverVoted
+     * {@code menuId}에 투표를 진행한 적이 없는 경우 발생합니다
      */
     void cancelVote(User user, long menuId);
 
