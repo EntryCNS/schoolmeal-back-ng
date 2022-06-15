@@ -57,10 +57,10 @@ public class MenuController {
 
     @PatchMapping("/{menu-id}/state")
     @ResponseStatus(HttpStatus.CREATED)
-    public void updateMenuState(@PathVariable(name = "menu-id") long menuId,
+    public MenuDto updateMenuState(@PathVariable(name = "menu-id") long menuId,
                                 @RequestBody MenuStateDto menuStateDto,
                                 Authentication authentication) {
-        menuService.updateState(
+        return menuService.updateState(
                 (User) authentication.getPrincipal(),
                 menuId,
                 menuStateDto
