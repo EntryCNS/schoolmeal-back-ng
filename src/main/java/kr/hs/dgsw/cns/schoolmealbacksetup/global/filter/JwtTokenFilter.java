@@ -1,6 +1,5 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.global.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.exception.BusinessException;
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.security.JwtProvider;
