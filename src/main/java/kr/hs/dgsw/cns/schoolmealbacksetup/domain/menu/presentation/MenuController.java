@@ -1,15 +1,13 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation;
 
-import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.VoteId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuCreationDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuListDto;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuStateDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.service.MenuService;
-import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.AuthId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +53,18 @@ public class MenuController {
     public void deleteVote(@PathVariable(name = "menu-id") long menuId,
                            Authentication authentication) {
         menuService.cancelVote((User) authentication.getPrincipal(), menuId);
+    }
+
+    @PatchMapping("/{menu-id}/state")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void updateMenuState(@PathVariable(name = "menu-id") long menuId,
+                                @RequestBody MenuStateDto menuStateDto,
+                                Authentication authentication) {
+        menuService.updateState(
+                (User) authentication.getPrincipal(),
+                menuId,
+                menuStateDto
+        );
     }
 
 }
