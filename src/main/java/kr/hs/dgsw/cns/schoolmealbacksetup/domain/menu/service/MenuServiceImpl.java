@@ -72,7 +72,7 @@ public class MenuServiceImpl implements MenuService {
         MenuRequest menuRequest = menuRequestRepository.findById(menuId)
                 .orElseThrow(() -> new MenuRequest.CannotFound(menuId));
 
-        if (voteRepository.existsById_Id_User(user)) {
+        if (voteRepository.existsByIdIdUser(user)) {
             // 존재한다면 이미 투표되었다고 409 예외 발생
             throw new Vote.AlreadyVoted();
         }
@@ -91,7 +91,7 @@ public class MenuServiceImpl implements MenuService {
     public void cancelVote(User user, long menuId) {
         MenuRequest menuRequest = menuRequestRepository.findById(menuId)
                 .orElseThrow(() -> new MenuRequest.CannotFound(menuId));
-        Vote vote = voteRepository.findById_Id_User_AndMenuRequest(user, menuRequest)
+        Vote vote = voteRepository.findByIdIdUserAndMenuRequest(user, menuRequest)
                         .orElseThrow(Vote.NeverVoted::new);
 
         menuRequest.removeVote(vote);

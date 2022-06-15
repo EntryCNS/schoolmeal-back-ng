@@ -14,9 +14,9 @@ import java.util.Optional;
 public interface VoteRepository extends CrudRepository<Vote, VoteId> {
 
     @Query("select (count(v) > 0) from Vote v where v.id.id.user = ?1")
-    boolean existsById_Id_User(User user);
+    boolean existsByIdIdUser(User user);
 
     @Query("select v from Vote v where v.id.id.user = ?1 and v.menuRequest = ?2")
-    Optional<Vote> findById_Id_User_AndMenuRequest(User user, MenuRequest menuRequest);
+    Optional<Vote> findByIdIdUserAndMenuRequest(User user, MenuRequest menuRequest);
 
 }

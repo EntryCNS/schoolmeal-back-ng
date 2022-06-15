@@ -157,7 +157,7 @@ public class MenuServiceTest {
 
         lenient().when(menuRequestRepository.findById(anyLong()))
                 .thenReturn(Optional.of(menuRequest));
-        lenient().when(voteRepository.findById_Id_User_AndMenuRequest(user, menuRequest))
+        lenient().when(voteRepository.findByIdIdUserAndMenuRequest(user, menuRequest))
                 .thenReturn(Optional.of(vote));
         // when
         menuService.cancelVote(user, anyLong());
