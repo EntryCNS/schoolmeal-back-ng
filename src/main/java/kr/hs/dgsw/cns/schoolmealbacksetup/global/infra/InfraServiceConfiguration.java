@@ -2,6 +2,7 @@ package kr.hs.dgsw.cns.schoolmealbacksetup.global.infra;
 
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.infra.google.GoogleApiService;
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.infra.google.GoogleAuthService;
+import kr.hs.dgsw.cns.schoolmealbacksetup.global.infra.neis.MealPlannerInfra;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import retrofit2.Retrofit;
@@ -26,6 +27,11 @@ public class InfraServiceConfiguration {
                 .baseUrl("https://www.googleapis.com")
                 .build();
         return retrofit.create(GoogleApiService.class);
+    }
+
+    @Bean
+    public MealPlannerInfra mealPlannerInfra() {
+        return new MealPlannerInfra();
     }
 
 }
