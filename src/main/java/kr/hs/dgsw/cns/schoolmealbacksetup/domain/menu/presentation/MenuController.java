@@ -4,6 +4,7 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.M
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuListDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuStateDto;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.PlannerDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.service.MenuService;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +66,13 @@ public class MenuController {
                 menuId,
                 menuStateDto
         );
+    }
+
+    @GetMapping("/planner")
+    public PlannerDto getMenuPlanner(@RequestParam int year,
+                                     @RequestParam int month,
+                                     @RequestParam int day) {
+        return menuService.getMenuPlanner(year, month, day);
     }
 
 }

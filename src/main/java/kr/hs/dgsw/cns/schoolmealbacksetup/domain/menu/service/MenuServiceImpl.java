@@ -7,11 +7,13 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.M
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuListDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuStateDto;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.PlannerDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.MenuRequestRepository;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.VoteRepository;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.AuthId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
+import kr.hs.dgsw.cns.schoolmealbacksetup.global.infra.neis.MealPlannerInfra;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,8 @@ public class MenuServiceImpl implements MenuService {
 
     private final MenuRequestRepository menuRequestRepository;
     private final VoteRepository voteRepository;
+
+    private final MealPlannerInfra mealPlannerInfra;
 
     @Override
     @Transactional(readOnly = true)
@@ -106,6 +110,11 @@ public class MenuServiceImpl implements MenuService {
         menuRequest.setMenuState(convertFrom(menuStateDto));
 
         return new MenuDto(menuRequest);
+    }
+
+    @Override
+    public PlannerDto getMenuPlanner(int year, int month, int day) {
+        return new PlannerDto(mealPlannerInfra.getMealsOfDate(year, month, day));
     }
 
     private MenuState convertFrom(MenuStateDto menuStateDto) {
