@@ -1,9 +1,11 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.global.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.filter.JwtTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -16,7 +18,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
     private final JwtProvider jwtProvider;
+    private final ObjectMapper objectMapper;
 
     // 로그인 로직, 회원가입 로직 등에서 활용되는 비밀번호 인코더
     @Bean
@@ -45,16 +49,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/users/signup").permitAll()
                 .and()
                 .authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/menu", "/menu/**/").permitAll()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/menu/**/votes").authenticated()
+                .and()
+                .authorizeRequests()
                 .antMatchers("/menu/**/state").hasRole("ADMIN")
                 .and()
                 .authorizeRequests()
                 .anyRequest().authenticated()
-
                 .and()
                 .addFilterBefore(new JwtTokenFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
-
-
     }
-
-
 }

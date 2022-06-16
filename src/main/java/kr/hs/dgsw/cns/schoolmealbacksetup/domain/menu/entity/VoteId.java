@@ -13,11 +13,6 @@ import java.io.Serializable;
 @Embeddable
 @AllArgsConstructor @NoArgsConstructor
 public class VoteId implements Serializable {
-
     @Embedded
     private AuthId id;
-
-    @OneToOne
-    @JoinColumn(name = "menu_id")
-    private MenuRequest menu;
 }

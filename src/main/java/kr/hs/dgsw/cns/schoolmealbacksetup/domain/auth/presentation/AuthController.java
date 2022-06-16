@@ -5,7 +5,6 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.presentation.dto.response.
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.presentation.dto.response.TokenRefreshResponse;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.auth.service.AuthService;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
-import kr.hs.dgsw.cns.schoolmealbacksetup.global.aop.Authorized;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +23,6 @@ class AuthController {
     }
 
     @GetMapping("/refresh")
-    @Authorized
     TokenRefreshResponse refresh(@RequestBody @Valid TokenRefreshRequest request, Authentication authentication) {
         return authService.refreshToken((User)authentication, request);
     }
