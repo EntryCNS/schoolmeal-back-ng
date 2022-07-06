@@ -15,10 +15,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MealPlannerInfra {
@@ -45,7 +42,7 @@ public class MealPlannerInfra {
             JSONParser parser = new JSONParser();
             return (JSONObject) parser.parse(jsonResult);
         }catch (IOException | ParseException ex) {
-            return null;
+            return new JSONObject(Collections.EMPTY_MAP);
         }
     }
 
