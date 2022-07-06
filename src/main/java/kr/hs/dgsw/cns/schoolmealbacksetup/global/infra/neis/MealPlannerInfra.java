@@ -42,7 +42,7 @@ public class MealPlannerInfra {
             JSONParser parser = new JSONParser();
             return (JSONObject) parser.parse(jsonResult);
         }catch (IOException | ParseException ex) {
-            return new JSONObject(Collections.EMPTY_MAP);
+            return new JSONObject(Collections.emptyMap());
         }
     }
 
