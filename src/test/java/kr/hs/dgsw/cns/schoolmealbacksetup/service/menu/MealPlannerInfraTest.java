@@ -16,7 +16,7 @@ import static org.mockito.Mockito.when;
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-public class MealPlannerInfraTest {
+class MealPlannerInfraTest {
 
     @Mock
     private MealPlannerInfra mealPlannerInfra;
@@ -27,7 +27,7 @@ public class MealPlannerInfraTest {
 
     @DisplayName("식단표 조회")
     @RepeatedTest(10)
-    public void getMeals() {
+    void getMeals() {
         // given
         String date = "20220616";
         List<MealPlannerInfra.MealItem> mealItems = List.of(
@@ -40,9 +40,9 @@ public class MealPlannerInfraTest {
 
         List<MealPlannerInfra.MealItem> actual = mealPlannerInfra.getMealsOfDate(anyInt(), anyInt(), anyInt());
 
-        assertThat(actual.size()).isEqualTo(3);
-        assertThat(actual.get(0).getMenuList().size()).isEqualTo(3);
-        assertThat(actual.get(1).getMenuList().size()).isEqualTo(3);
-        assertThat(actual.get(2).getMenuList().size()).isEqualTo(3);
+        assertThat(actual).hasSize(3);
+        assertThat(actual.get(0).getMenuList()).hasSize(3);
+        assertThat(actual.get(1).getMenuList()).hasSize(3);
+        assertThat(actual.get(2).getMenuList()).hasSize(3);
     }
 }
