@@ -4,13 +4,16 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuCategory;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @AllArgsConstructor @NoArgsConstructor
@@ -25,8 +28,8 @@ public class MenuRequest {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @NotNull
     @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createAt;
 
     @NotNull
@@ -37,11 +40,41 @@ public class MenuRequest {
     @Length(max = 512)
     private String content;
 
-    @ColumnDefault(value = "'STANDBY'")
+    @NotNull
     @Enumerated(EnumType.STRING)
     private MenuState state;
 
     @NotNull
     @Enumerated(EnumType.STRING)
     private MenuCategory menuCategory;
+
+    @OneToMany(mappedBy = "menuRequest")
+    private Set<Vote> votes = new HashSet<>();
+
+    public void addVote(Vote vote) {
+        this.votes.add(vote);
+    }
+
+    public void removeVote(Vote vote) {
+        this.votes.remove(vote);
+    }
+
+    public void setMenuState(MenuState menuState) {
+        this.state = menuState;
+    }
+ 
+    @Getter
+    @ResponseStatus(value = HttpStatus.CONFLICT)
+    public static class PageCannotNegative extends RuntimeException {
+    }
+
+    @Getter
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public static class CannotFound extends RuntimeException {
+        private final String message;
+
+        public CannotFound(long id) {
+            this.message = String.format("cannot found menu such as id is '%d'", id);
+        }
+    }
 }
