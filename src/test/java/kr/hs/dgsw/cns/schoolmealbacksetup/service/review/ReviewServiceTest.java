@@ -15,10 +15,8 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -46,13 +44,6 @@ public class ReviewServiceTest {
                 .rate(5)
                 .build();
 
-        Review review = Review.builder()
-                .message("맛없어요")
-                .rate(5)
-                .user(newUser)
-                .reviewTime(ReviewTime.BREAKFAST)
-                .build();
-
         WriteReviewResponseDto expected = WriteReviewResponseDto.builder()
                 .reviewTime(ReviewTime.BREAKFAST)
                 .rate(5)
@@ -60,8 +51,8 @@ public class ReviewServiceTest {
                 .date(String.format("YYYY-MM-DD",LocalDate.now()))
                 .build();
 
-
-        //assertThat(reviewService.writeReview(newUser, writeReviewRequestDto)).isEqualTo(expected);
+        when(reviewService.writeReview(newUser, writeReviewRequestDto)).thenReturn(expected);
+        assertThat(reviewService.writeReview(newUser, writeReviewRequestDto)).isEqualTo(expected);
     }
 
     @Test

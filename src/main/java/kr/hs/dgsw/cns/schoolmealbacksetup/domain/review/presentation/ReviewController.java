@@ -23,11 +23,11 @@ public class ReviewController {
 
     @GetMapping
     public ReviewListDto getReviewList(@RequestParam String date,@RequestParam ReviewTime reviewTime, int page){
-        return reviewService.getReviewByDate(date,reviewTime,page);
+        return reviewService.getReviewByDate(date, reviewTime, page);
     }
 
     @PostMapping
-    public WriteReviewResponseDto writeReview(Authentication authenticator, @RequestBody WriteReviewRequestDto writeReviewRequestDto) {
-        return reviewService.writeReview(authenticator,writeReviewRequestDto);
+    public WriteReviewResponseDto writeReview(Authentication authentication, @RequestBody WriteReviewRequestDto writeReviewRequestDto) {
+        return reviewService.writeReview((User) authentication.getPrincipal(), writeReviewRequestDto);
     }
 }

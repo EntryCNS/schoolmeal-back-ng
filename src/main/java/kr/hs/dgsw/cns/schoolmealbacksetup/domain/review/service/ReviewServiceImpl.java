@@ -27,11 +27,11 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
 
     @Override
-    public WriteReviewResponseDto writeReview(Authentication author, WriteReviewRequestDto writeReviewRequest) {
+    public WriteReviewResponseDto writeReview(User author, WriteReviewRequestDto writeReviewRequest) {
 
         Review review = Review.builder()
                 .message(writeReviewRequest.getMessage())
-                .user((User) author.getPrincipal())
+                .user(author)
                 .date(LocalDate.now())
                 .rate(writeReviewRequest.getRate())
                 .reviewTime(writeReviewRequest.getReviewTime())
