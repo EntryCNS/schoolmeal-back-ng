@@ -9,6 +9,7 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.MenuControlle
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuCreationDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuStateDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.PlannerDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.MenuRequestRepository;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.service.MenuService;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuCategory;
@@ -17,6 +18,7 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.AuthId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.repository.UserRepository;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.type.UserRole;
+import kr.hs.dgsw.cns.schoolmealbacksetup.global.infra.neis.MealPlannerInfra;
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.security.JwtConfiguration;
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.security.JwtProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -38,6 +40,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -118,6 +121,10 @@ class MenuControllerTest {
 
     private String token() {
         return String.format("Bearer %s", jwtProvider.generateAccessToken("1"));
+    }
+
+    private List<String> list(String... args) {
+        return List.of(args);
     }
 
     private Vote vote(MenuRequest menuRequest, User user) {
@@ -426,6 +433,34 @@ class MenuControllerTest {
         resultActions
                 .andDo(print())
                 .andExpect(status().isForbidden());
+    }
+
+    @DisplayName("식단표 조회")
+    @Test
+    void getMealPlanner() throws Exception {
+        // given
+        int year = 2022, month = 6, day = 16;
+        String date = String.format("%02d%02d%02d", year, month, day);
+        List<MealPlannerInfra.MealItem> mealItems = List.of(
+                new MealPlannerInfra.MealItem(date, "조식", list("*기장밥", "새알심만두국", "숙주나물무침")),
+                new MealPlannerInfra.MealItem(date, "중식", list("*기장밥", "단배추된장국", "오향장육")),
+                new MealPlannerInfra.MealItem(date, "석식", list("매콤치킨마요덮밥", "미소된장국", "두부양념구이"))
+        );
+        lenient().when(menuService.getMenuPlanner(year, month, day)).thenReturn(new PlannerDto(mealItems));
+
+        // when
+        ResultActions resultActions = mockMvc.perform(
+                get("/menu/planner")
+                        .param("year", String.valueOf(year))
+                        .param("month", String.valueOf(month))
+                        .param("day", String.valueOf(day))
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        resultActions
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
 }

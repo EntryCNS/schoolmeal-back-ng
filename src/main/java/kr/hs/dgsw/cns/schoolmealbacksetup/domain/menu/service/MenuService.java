@@ -4,7 +4,9 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.M
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuListDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuStateDto;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.PlannerDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
+import kr.hs.dgsw.cns.schoolmealbacksetup.global.infra.neis.MealPlannerInfra;
 
 /**
  * <h1>메뉴 Service Interface</h1>
@@ -82,4 +84,15 @@ public interface MenuService {
      * @see kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState
      */
     MenuDto updateState(User user, long menuId, MenuStateDto menuStateDto);
+
+    /**
+     * <h2>식단표 조회</h2>
+     * @param year 가져올 년도
+     * @param month 가져올 월
+     * @param day 가져올 일자
+     * @throws MealPlannerInfra.MealParseFailedException
+     * 크롤링이 실패했을 때 발생합니다
+     * @return PlannerDto
+     */
+    PlannerDto getMenuPlanner(int year, int month, int day);
 }
