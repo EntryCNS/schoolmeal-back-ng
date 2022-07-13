@@ -11,9 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.Authenticator;
-import java.time.LocalDate;
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/reviews")

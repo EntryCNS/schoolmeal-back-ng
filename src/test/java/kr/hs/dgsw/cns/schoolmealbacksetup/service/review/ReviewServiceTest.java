@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
-public class ReviewServiceTest {
+class ReviewServiceTest {
 
     @Mock
     ReviewServiceImpl reviewService;

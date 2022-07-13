@@ -52,7 +52,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         Page<Review> reviewPage = reviewRepository.findAllByDateAndReviewTime(LocalDate.parse(String.format(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"))), reviewTime, reviewPageRequest);
         List<ReviewDto> responseList = reviewPage.getContent()
-                .stream().map((it) -> ReviewDto.builder()
+                .stream().map(it -> ReviewDto.builder()
                         .message(it.getMessage())
                         .rate((short) it.getRate())
                         .build())
