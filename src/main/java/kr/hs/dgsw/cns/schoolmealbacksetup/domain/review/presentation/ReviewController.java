@@ -8,10 +8,10 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.review.service.ReviewService;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.review.type.ReviewTime;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.Authenticator;
 import java.time.LocalDate;
 
 @RequiredArgsConstructor
@@ -22,12 +22,12 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping
-    public ReviewListDto getReviewList(LocalDate date, ReviewTime reviewTime, int page){
+    public ReviewListDto getReviewList(@RequestParam String date,@RequestParam ReviewTime reviewTime, int page){
         return reviewService.getReviewByDate(date,reviewTime,page);
     }
 
-    @GetMapping
-    public WriteReviewResponseDto writeReview(User user, WriteReviewRequestDto writeReviewRequestDto) {
-        return reviewService.writeReview(user,writeReviewRequestDto);
+    @PostMapping
+    public WriteReviewResponseDto writeReview(Authentication authenticator, @RequestBody WriteReviewRequestDto writeReviewRequestDto) {
+        return reviewService.writeReview(authenticator,writeReviewRequestDto);
     }
 }

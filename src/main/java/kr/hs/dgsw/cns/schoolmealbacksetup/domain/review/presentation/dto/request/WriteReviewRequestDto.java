@@ -5,10 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 
 @Getter
 @Builder
@@ -16,9 +17,10 @@ import java.time.LocalDate;
 public class WriteReviewRequestDto {
 
     @NotNull
-    private LocalDate date;
+    private String date;
 
     @NotNull
+    @Enumerated(value = EnumType.STRING)
     private ReviewTime reviewTime;
 
     @NotNull

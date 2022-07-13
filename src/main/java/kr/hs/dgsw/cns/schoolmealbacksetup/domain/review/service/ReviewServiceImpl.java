@@ -11,22 +11,27 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
 
     @Override
-    public WriteReviewResponseDto writeReview(User author, WriteReviewRequestDto writeReviewRequest) {
+    public WriteReviewResponseDto writeReview(Authentication author, WriteReviewRequestDto writeReviewRequest) {
+
         Review review = Review.builder()
                 .message(writeReviewRequest.getMessage())
-                .user(author)
+                .user((User) author.getPrincipal())
                 .date(LocalDate.now())
                 .rate(writeReviewRequest.getRate())
                 .reviewTime(writeReviewRequest.getReviewTime())
@@ -42,10 +47,10 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ReviewListDto getReviewByDate(LocalDate date, ReviewTime reviewTime, int page) {
+    public ReviewListDto getReviewByDate(String date, ReviewTime reviewTime, int page) {
         PageRequest reviewPageRequest = PageRequest.of(page , 10);
 
-        Page<Review> reviewPage = reviewRepository.findAllByDateAndReviewTime(LocalDate.parse(date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))), reviewTime, reviewPageRequest);
+        Page<Review> reviewPage = reviewRepository.findAllByDateAndReviewTime(LocalDate.parse(String.format(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"))), reviewTime, reviewPageRequest);
         List<ReviewDto> responseList = reviewPage.getContent()
                 .stream().map((it) -> ReviewDto.builder()
                         .message(it.getMessage())

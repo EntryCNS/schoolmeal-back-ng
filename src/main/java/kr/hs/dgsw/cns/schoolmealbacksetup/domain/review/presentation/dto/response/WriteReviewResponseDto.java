@@ -6,16 +6,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDate;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 @Getter
 @AllArgsConstructor
 @Builder
 public class WriteReviewResponseDto {
 
-    private LocalDate date;
+    private String date;
 
     @JsonProperty("review_time")
+    @Enumerated(value = EnumType.STRING)
     private ReviewTime reviewTime;
 
     private String message;
