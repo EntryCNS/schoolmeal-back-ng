@@ -1,11 +1,9 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.service.review;
 
-import kr.hs.dgsw.cns.schoolmealbacksetup.domain.review.entity.Review;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.review.presentation.dto.request.WriteReviewRequestDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.review.presentation.dto.response.ReviewDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.review.presentation.dto.response.ReviewListDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.review.presentation.dto.response.WriteReviewResponseDto;
-import kr.hs.dgsw.cns.schoolmealbacksetup.domain.review.repository.ReviewRepository;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.review.service.ReviewServiceImpl;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.review.type.ReviewTime;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
@@ -16,12 +14,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@Transactional
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceTest {
@@ -29,7 +29,7 @@ class ReviewServiceTest {
     @Mock
     ReviewServiceImpl reviewService;
 
-    private static User newUser = User.builder()
+    private User newUser = User.builder()
             .name("이승민")
             .role(UserRole.USER)
             .id(0L)
