@@ -21,7 +21,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@Transactional
+
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceTest {
