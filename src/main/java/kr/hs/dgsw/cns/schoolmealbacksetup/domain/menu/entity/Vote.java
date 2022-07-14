@@ -38,5 +38,9 @@ public class Vote {
         }
     }
 
+    public static class NotVoteable extends BusinessException {
+        public NotVoteable() { super(HttpStatus.FORBIDDEN, "투표는 대기중인 메뉴에만 할 수 있습니다"); }
+    }
+
 
 }
