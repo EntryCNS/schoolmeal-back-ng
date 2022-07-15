@@ -322,9 +322,6 @@ class MenuControllerTest {
         lenient().doThrow(new Vote.NotVotable())
                 .when(menuService)
                 .addVote(any(User.class), anyLong());
-//        lenient().doThrow(new Vote.NotVotable())
-//                .when(menuService)
-//                .addVote(any(User.class), anyLong());
 
         // when
         ResultActions resultActions = mockMvc.perform(
