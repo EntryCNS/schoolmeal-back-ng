@@ -304,24 +304,27 @@ class MenuControllerTest {
                 .andExpect(status().isConflict());
     }
 
-    @DisplayName("STANDBY가 아닌 메뉴에 투표")
+    @DisplayName("STANDBY 가 아닌 메뉴에 투표")
     @Test
     void voteAtNotStandby() throws Exception {
-        MenuRequest notStandbyMenu = new MenuRequest().builder()
-                .id(1l)
-                .content("맛있는 참치 뀨우")
-                .state(MenuState.ALLOWED)
-                .build();
+        MenuRequest notStandByMenu = toEntity(
+                "맛있는 참치 뀨우",
+                "",
+                MenuCategory.KOREAN,
+                new HashSet<>()
+        );
+        notStandByMenu.setMenuState(MenuState.ALLOWED);
 
-        lenient().when(menuRequestRepository.findById(1l))
-                .thenReturn(Optional.of(notStandbyMenu));
-
+        lenient().when(menuRequestRepository.findById(anyLong()))
+                .thenReturn(Optional.of(notStandByMenu));
         lenient().when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user()));
-
-        lenient().doThrow(new Vote.NotVoteable())
+        lenient().doThrow(new Vote.NotVotable())
                 .when(menuService)
-                .addVote(eq(user()), anyLong());
+                .addVote(any(User.class), anyLong());
+//        lenient().doThrow(new Vote.NotVotable())
+//                .when(menuService)
+//                .addVote(any(User.class), anyLong());
 
         // when
         ResultActions resultActions = mockMvc.perform(
