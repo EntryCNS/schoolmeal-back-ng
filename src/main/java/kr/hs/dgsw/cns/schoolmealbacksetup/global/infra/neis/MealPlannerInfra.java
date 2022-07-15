@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.ToString;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.json.simple.*;
 
@@ -67,6 +68,8 @@ public class MealPlannerInfra {
         return list;
     }
 
+
+    @Cacheable(value = "MealPlannerInfra", key = "#year + #month + #day")
     public List<MealItem> getMealsOfDate(int year, int month, int day) {
         String timeString = String.format("%02d%02d%02d", year, month, day);
         try {
