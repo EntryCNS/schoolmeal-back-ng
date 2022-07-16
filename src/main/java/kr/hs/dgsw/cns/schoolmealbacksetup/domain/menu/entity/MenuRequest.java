@@ -5,6 +5,7 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -31,6 +32,9 @@ public class MenuRequest {
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createAt;
+
+    @UpdateTimestamp
+    private LocalDateTime acceptedAt;
 
     @NotNull
     @Length(max = 128)
