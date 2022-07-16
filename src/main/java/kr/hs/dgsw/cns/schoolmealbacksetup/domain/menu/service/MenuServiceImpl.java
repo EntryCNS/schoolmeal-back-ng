@@ -42,12 +42,10 @@ public class MenuServiceImpl implements MenuService {
         Page<MenuRequest> menuPage;
         PageRequest pageRequest = PageRequest.of(page, 10, Sort.by("createAt").descending());
 
-        switch (selectionType) {
-            case ACCEPTED_TODAY:
-                menuPage = menuRequestRepository.findAllByStateAndAcceptedDate(MenuState.ALLOWED, LocalDateTime.now(), pageRequest);
-                break;
-            default:
-                menuPage = menuRequestRepository.findAllByState(selectionType.toEntityType(), pageRequest);
+        if(MenuSelectionType.ACCEPTED_TODAY == selectionType) {
+            menuPage = menuRequestRepository.findAllByStateAndAcceptedDate(MenuState.ALLOWED, LocalDateTime.now(), pageRequest);
+        } else {
+            menuPage = menuRequestRepository.findAllByState(selectionType.toEntityType(), pageRequest);
         }
 
         List<MenuDto> menuDtos = menuPage.stream()
@@ -55,7 +53,7 @@ public class MenuServiceImpl implements MenuService {
                 .collect(Collectors.toList());
 
         return MenuListDto.builder()
-                .page((int) page)
+                .page(page)
                 .pageCount(menuPage.getTotalPages())
                 .result(menuDtos)
                 .build();

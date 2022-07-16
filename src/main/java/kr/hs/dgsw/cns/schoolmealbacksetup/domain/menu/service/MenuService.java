@@ -9,8 +9,6 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.infra.neis.MealPlannerInfra;
 
-import java.util.Optional;
-
 /**
  * <h1>메뉴 Service Interface</h1>
  * @see kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest
