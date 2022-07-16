@@ -1,6 +1,7 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation;
 
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuCreationDto;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuSelectionType;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuListDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuStateDto;
@@ -26,8 +27,8 @@ public class MenuController {
     private final MenuService menuService;
 
     @GetMapping
-    public MenuListDto findAllMenu(@RequestParam(defaultValue = "1") long page) {
-        return menuService.findAllMenus(page);
+    public MenuListDto findAllMenu(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "ACCEPTED") String status) {
+        return menuService.findAllMenus(page, MenuSelectionType.fromString(status));
     }
 
     @PostMapping
