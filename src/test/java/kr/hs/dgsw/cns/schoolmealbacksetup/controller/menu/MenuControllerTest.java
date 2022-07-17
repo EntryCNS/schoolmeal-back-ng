@@ -139,7 +139,7 @@ class MenuControllerTest {
         lenient().when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user()));
         lenient().when(menuService.addMenu(any(), any()))
-                .thenReturn(new MenuDto(toEntity(menuCreationDto)));
+                .thenReturn(new MenuDto(toEntity(menuCreationDto), user()));
         String content = objectMapper.writeValueAsString(menuCreationDto);
 
         // when
@@ -166,7 +166,7 @@ class MenuControllerTest {
         // given
         MenuCreationDto menuCreationDto = new MenuCreationDto(MenuCategory.KOREAN, "김밥", "참치 김밥");
         lenient().when(menuService.addMenu(any(), any()))
-                .thenReturn(new MenuDto(toEntity(menuCreationDto)));
+                .thenReturn(new MenuDto(toEntity(menuCreationDto), user()));
         String content = objectMapper.writeValueAsString(menuCreationDto);
 
         // when
@@ -193,7 +193,7 @@ class MenuControllerTest {
                 MenuCategory.JAPANESE,
                 new HashSet<>()
         );
-        MenuDto menuDto = new MenuDto(menuRequest);
+        MenuDto menuDto = new MenuDto(menuRequest, user());
         lenient().when(menuService.findById(anyLong()))
                 .thenReturn(menuDto);
 
@@ -405,7 +405,7 @@ class MenuControllerTest {
                 new HashSet<>()
         );
         menuRequest.setMenuState(MenuState.DENIED);
-        MenuDto menuDto = new MenuDto(menuRequest);
+        MenuDto menuDto = new MenuDto(menuRequest, user());
 
         lenient().when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
@@ -442,7 +442,7 @@ class MenuControllerTest {
                 new HashSet<>()
         );
         menuRequest.setMenuState(MenuState.ALLOWED);
-        MenuDto menuDto = new MenuDto(menuRequest);
+        MenuDto menuDto = new MenuDto(menuRequest, user());
 
         lenient().when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));

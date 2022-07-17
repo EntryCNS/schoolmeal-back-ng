@@ -13,6 +13,7 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuCategory;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.AuthId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.facade.UserFacade;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.type.UserRole;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +39,9 @@ class MenuServiceTest {
 
     @Mock
     private VoteRepository voteRepository;
+
+    @Mock
+    private UserFacade userFacade;
 
     @InjectMocks
     private MenuServiceImpl menuService;
@@ -92,6 +96,8 @@ class MenuServiceTest {
         lenient().doReturn(toEntity(menuCreationDto)).when(menuRequestRepository)
                 .save(any(MenuRequest.class));
 
+        lenient().when(userFacade.getCurrentUser()).thenReturn(user());
+
         // when
         MenuDto menuDto = menuService.addMenu(user(), menuCreationDto);
 
@@ -115,6 +121,8 @@ class MenuServiceTest {
         long id = 1L;
         lenient().when(menuRequestRepository.findById(id))
                 .thenReturn(Optional.of(toEntity(menuCreationDto)));
+
+        lenient().when(userFacade.getCurrentUser()).thenReturn(user());
 
         // when
         MenuDto menuDto = menuService.findById(id);

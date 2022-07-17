@@ -14,6 +14,7 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.repository.VoteRepository;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.type.MenuState;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.AuthId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.facade.UserFacade;
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.infra.neis.MealPlannerInfra;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 @Service(value = "MenuServiceImpl")
 public class MenuServiceImpl implements MenuService {
 
+    private final UserFacade userFacade;
     private final MenuRequestRepository menuRequestRepository;
     private final VoteRepository voteRepository;
 
@@ -49,7 +51,7 @@ public class MenuServiceImpl implements MenuService {
         }
 
         List<MenuDto> menuDtos = menuPage.stream()
-                .map(MenuDto::new)
+                .map(it -> new MenuDto(it, userFacade.getCurrentUser()))
                 .collect(Collectors.toList());
 
         return MenuListDto.builder()
@@ -71,7 +73,7 @@ public class MenuServiceImpl implements MenuService {
                 .build();
 
         MenuRequest savedRequest = menuRequestRepository.save(menuRequest);
-        return new MenuDto(savedRequest);
+        return new MenuDto(savedRequest, userFacade.getCurrentUser());
     }
 
     @Override
@@ -79,7 +81,7 @@ public class MenuServiceImpl implements MenuService {
     public MenuDto findById(long menuId) {
         MenuRequest menuRequest = menuRequestRepository.findById(menuId)
                 .orElseThrow(() -> new MenuRequest.CannotFound(menuId));
-        return new MenuDto(menuRequest);
+        return new MenuDto(menuRequest, userFacade.getCurrentUser());
     }
 
     @Override
@@ -125,7 +127,7 @@ public class MenuServiceImpl implements MenuService {
                 .orElseThrow(() -> new MenuRequest.CannotFound(menuId));
         menuRequest.setMenuState(convertFrom(menuStateDto));
 
-        return new MenuDto(menuRequest);
+        return new MenuDto(menuRequest, userFacade.getCurrentUser());
     }
 
     @Override
