@@ -51,7 +51,7 @@ public class MenuServiceImpl implements MenuService {
         }
 
         List<MenuDto> menuDtos = menuPage.stream()
-                .map(MenuDto::new)
+                .map(it -> new MenuDto(it, userFacade.getCurrentUser()))
                 .collect(Collectors.toList());
 
         return MenuListDto.builder()
