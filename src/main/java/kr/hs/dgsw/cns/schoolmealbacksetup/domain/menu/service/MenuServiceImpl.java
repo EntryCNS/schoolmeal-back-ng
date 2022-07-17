@@ -4,6 +4,7 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.Vote;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.VoteId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuCreationDto;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuSelectionType;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuListDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuStateDto;
@@ -15,9 +16,13 @@ import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.AuthId;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.user.entity.User;
 import kr.hs.dgsw.cns.schoolmealbacksetup.global.infra.neis.MealPlannerInfra;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,17 +37,24 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional(readOnly = true)
-    public MenuListDto findAllMenus(long page) {
-        List<MenuRequest> menuRequests =
-                menuRequestRepository.findTop10ByOrderByCreateAtDesc();
-        long pageCount = (menuRequestRepository.count() / 10 == 0) ? 1 : menuRequestRepository.count();
-        List<MenuDto> menuDtos = menuRequests.stream()
+    public MenuListDto findAllMenus(int page, MenuSelectionType selectionType) {
+
+        Page<MenuRequest> menuPage;
+        PageRequest pageRequest = PageRequest.of(page, 10, Sort.by("createAt").descending());
+
+        if(MenuSelectionType.ACCEPTED_TODAY == selectionType) {
+            menuPage = menuRequestRepository.findAllByStateAndAcceptedDate(MenuState.ALLOWED, LocalDateTime.now(), pageRequest);
+        } else {
+            menuPage = menuRequestRepository.findAllByState(selectionType.toEntityType(), pageRequest);
+        }
+
+        List<MenuDto> menuDtos = menuPage.stream()
                 .map(MenuDto::new)
                 .collect(Collectors.toList());
 
         return MenuListDto.builder()
-                .page((int) page)
-                .pageCount((int) pageCount)
+                .page(page)
+                .pageCount(menuPage.getTotalPages())
                 .result(menuDtos)
                 .build();
     }

@@ -1,6 +1,7 @@
 package kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.service;
 
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuCreationDto;
+import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuSelectionType;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.response.MenuListDto;
 import kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.presentation.dto.request.MenuStateDto;
@@ -19,11 +20,12 @@ public interface MenuService {
      * 페이지 page 에 위치한 메뉴들을 반환합니다<br/>
      * 0보다 작은 경우, 예외가 발생합니다
      * @param page 메뉴 page
+     * @param selectionType 원하는 타입
      * @return {@link MenuListDto}
      * @throws kr.hs.dgsw.cns.schoolmealbacksetup.domain.menu.entity.MenuRequest.PageCannotNegative
      * page 파라미터가 음수인 경우 발생합니다
      */
-    MenuListDto findAllMenus(long page);
+    MenuListDto findAllMenus(int page, MenuSelectionType selectionType);
 
     /**
      * <h2>메뉴 추가하기</h2>
